@@ -76,7 +76,7 @@ const AddQuest = () => {
           type="text"
           id="quest_name"
           name="quest_name"
-          className="text-gray-900 rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white"
+          className="rounded-lg block w-full p-2.5 primary_text_area"
           value={formData.quest_name}
           onChange={handleChange}
         />
@@ -113,6 +113,7 @@ const AddQuest = () => {
         </select>
       </div>
 
+      {/* Quest Condition */}
       <div className="flex flex-col space-y-4 w-full">
         <label
           className="primary_object secondary_text p-2 w-full"
@@ -123,45 +124,63 @@ const AddQuest = () => {
         <textarea
           id="quest_condition"
           name="quest_condition"
-          className="text-gray-900 rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white"
+          className="text-gray-900 rounded-lg block w-full p-2.5 primary_text_area"
           rows={15}
           value={formData.quest_condition}
           onChange={handleChange}
         />
       </div>
 
-      <div className="flex flex-col space-y-4 w-full">
-        <label
-          className="primary_object secondary_text p-2 w-full"
-          htmlFor="quest_inputs"
-        >
-          Inputs
-        </label>
-        <textarea
-          id="quest_inputs"
-          name="quest_inputs"
-          className="text-gray-900 rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white"
-          rows={10}
-          value={formData.quest_inputs}
-          onChange={handleChange}
-        />
-      </div>
+      {/* Quest Inputs and Outputs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+        {/* Repeat this block for each test case (0 to 9) */}
+        {[...Array(10)].map((_, index) => (
+          <React.Fragment key={index}>
+            {/* Input field */}
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor={`input_${index}`}
+                className={`text-sm font-semibold ${
+                  index < 2 ? "text-red-500" : "text-cyan-400"
+                }`}
+              >
+                Input {index}
+                {index < 2 && " (Required)"}
+              </label>
+              <textarea
+                id={`input_${index}`}
+                name={`input_${index}`}
+                rows={3}
+                className="rounded-lg block w-full h-12 p-2.5 primary_text_area"
+                value={formData[`input_${index}`] || ""}
+                onChange={handleChange}
+                required={index < 2}
+              />
+            </div>
 
-      <div className="flex flex-col space-y-4 w-full">
-        <label
-          className="primary_object secondary_text p-2 w-full"
-          htmlFor="quest_outputs"
-        >
-          Outputs
-        </label>
-        <textarea
-          id="quest_outputs"
-          name="quest_outputs"
-          className="text-gray-900 rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white"
-          rows={10}
-          value={formData.quest_outputs}
-          onChange={handleChange}
-        />
+            {/* Output field */}
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor={`output_${index}`}
+                className={`text-sm font-semibold  ${
+                  index < 2 ? "text-red-500" : "text-cyan-400"
+                }`}
+              >
+                Output {index}
+                {index < 2 && " (Required)"}
+              </label>
+              <textarea
+                id={`output_${index}`}
+                name={`output_${index}`}
+                rows={3}
+                className="rounded-lg block w-full h-12 p-2.5 primary_text_area"
+                value={formData[`output_${index}`] || ""}
+                onChange={handleChange}
+                required={index < 2}
+              />
+            </div>
+          </React.Fragment>
+        ))}
       </div>
 
       <div className="flex flex-col space-y-4 w-full">

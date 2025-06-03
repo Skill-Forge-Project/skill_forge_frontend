@@ -37,7 +37,7 @@ const EditQuestPage = ({ questId, onBack }) => {
           quest_inputs: data.test_inputs || "",
           quest_outputs: data.test_outputs || "",
           function_template: data.function_template || "",
-          quest_unitests: data.unit_tests || "",
+          quest_solution: data.example_solution || "",
         });
       } catch (error) {
         console.error("Error fetching quest:", error);
@@ -76,7 +76,7 @@ const EditQuestPage = ({ questId, onBack }) => {
           quest_author: userId,
           condition: formData.quest_condition,
           function_template: formData.function_template,
-          unit_tests: formData.quest_unitests,
+          example_solution: formData.example_solution,
           test_inputs: formData.quest_inputs,
           test_outputs: formData.quest_outputs,
           type: "Basic",
@@ -176,51 +176,83 @@ const EditQuestPage = ({ questId, onBack }) => {
         <div className="mb-4">
           <label className="block mb-2">Function Template:</label>
           <CodeEditor
-          language={formData.quest_language}
-          code={formData.function_template}
-          onChange={(val) =>
-            setFormData((prev) => ({
-              ...prev,
-              function_template: val,
-            }))
-          }
-        />
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-2">Test Inputs:</label>
-          <textarea
-            name="quest_inputs"
-            value={formData.quest_inputs}
-            onChange={handleChange}
-            className="text-gray-900 rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            rows={10}
+            language={formData.quest_language}
+            code={formData.function_template}
+            onChange={(val) =>
+              setFormData((prev) => ({
+                ...prev,
+                function_template: val,
+              }))
+            }
           />
         </div>
+        
+        {/* Quest Inputs and Outputs */}
+         {/* Quest Inputs and Outputs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+        {/* Repeat this block for each test case (0 to 9) */}
+        {[...Array(10)].map((_, index) => (
+          <React.Fragment key={index}>
+            {/* Input field */}
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor={`input_${index}`}
+                className={`text-m font-semibold ${
+                  index < 2 ? "text-red-500" : "text-cyan-400"
+                }`}
+              >
+                Input {index}
+                {index < 2 && " (Required)"}
+              </label>
+              <textarea
+                id={`input_${index}`}
+                name={`input_${index}`}
+                rows={3}
+                className="rounded-lg block w-full h-12 p-2.5 primary_text_area"
+                value={formData[`input_${index}`] || ""}
+                onChange={handleChange}
+                required={index < 2}
+              />
+            </div>
 
-        <div className="mb-4">
-          <label className="block mb-2">Expected Outputs:</label>
-          <textarea
-            name="quest_outputs"
-            value={formData.quest_outputs}
-            onChange={handleChange}
-            className="text-gray-900 rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            rows={10}
-          />
-        </div>
+            {/* Output field */}
+            <div className="flex flex-col space-y-2">
+              <label
+                htmlFor={`output_${index}`}
+                className={`text-m font-semibold  ${
+                  index < 2 ? "text-red-500" : "text-cyan-400"
+                }`}
+              >
+                Output {index}
+                {index < 2 && " (Required)"}
+              </label>
+              <textarea
+                id={`output_${index}`}
+                name={`output_${index}`}
+                rows={3}
+                className="rounded-lg block w-full h-12 p-2.5 primary_text_area"
+                value={formData[`output_${index}`] || ""}
+                onChange={handleChange}
+                required={index < 2}
+              />
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
 
-        <div className="mb-4">
+        {/* Example Solution */}
+        <div className="mb-4 mt-4">
           <label className="block mb-2">Example Solution:</label>
           <CodeEditor
-          language={formData.quest_language}
-          code={formData.quest_unitests}
-          onChange={(val) =>
-            setFormData((prev) => ({
-              ...prev,
-              quest_unitests: val,
-            }))
-          }
-        />
+            language={formData.quest_language}
+            code={formData.example_solution}
+            onChange={(val) =>
+              setFormData((prev) => ({
+                ...prev,
+                example_solution: val,
+              }))
+            }
+          />
         </div>
 
         <button type="submit" className="px-4 py-2 rounded primary_button">
@@ -231,7 +263,12 @@ const EditQuestPage = ({ questId, onBack }) => {
       </form>
 
       {/* Modal for Quest Edit Page */}
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Edit Quest" message={modalMessage} />
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Edit Quest"
+        message={modalMessage}
+      />
     </div>
   );
 };

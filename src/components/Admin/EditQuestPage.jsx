@@ -10,10 +10,11 @@ const EditQuestPage = ({ questId, onBack }) => {
     quest_language: "",
     quest_difficulty: "",
     quest_condition: "",
-    quest_inputs: "",
-    quest_outputs: "",
     function_template: "",
-    quest_unitests: "",
+    example_solution: "",
+    // Dynamically create input/output fields
+    ...Object.fromEntries([...Array(10)].map((_, i) => [`input_${i}`, ""])),
+    ...Object.fromEntries([...Array(10)].map((_, i) => [`output_${i}`, ""])),
   });
 
   const [loading, setLoading] = useState(true);
@@ -61,48 +62,55 @@ const EditQuestPage = ({ questId, onBack }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-
+  
     try {
+      // Prepare inputs and outputs dynamically
+      const inputs = {};
+      const outputs = {};
+  
+      formData.quest_inputs.forEach((val, i) => {
+        inputs[`input_${i}`] = val;
+      });
+  
+      formData.quest_outputs.forEach((val, i) => {
+        outputs[`output_${i}`] = val;
+      });
+  
+      const payload = {
+        language: formData.quest_language,
+        difficulty: formData.quest_difficulty,
+        quest_name: formData.quest_name,
+        quest_author: userId,
+        condition: formData.quest_condition,
+        example_solution: formData.example_solution,
+        type: "Basic",
+        ...inputs,
+        ...outputs,
+      };
+  
       const response = await fetch(`${QUESTS_API}/quests/${questId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          language: formData.quest_language,
-          difficulty: formData.quest_difficulty,
-          quest_name: formData.quest_name,
-          quest_author: userId,
-          condition: formData.quest_condition,
-          function_template: formData.function_template,
-          example_solution: formData.example_solution,
-          test_inputs: formData.quest_inputs,
-          test_outputs: formData.quest_outputs,
-          type: "Basic",
-        }),
+        body: JSON.stringify(payload),
       });
-
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         setModalMessage("Quest updated successfully!");
         setModalOpen(true);
-        // alert("Quest updated successfully!");
-        // console.log("Updated Quest ID:", data.quest_id);
       } else {
         setModalMessage("Failed to update quest.");
         setModalOpen(true);
-        // console.error("Error:", data.error);
-        // alert("Failed to update quest.");
       }
     } catch (error) {
       setModalMessage("An error occurred.");
       setModalOpen(true);
-      // console.error("Fetch error:", error);
-      // alert("An error occurred.");
     }
+  
     setSubmitting(false);
   };
 
@@ -188,7 +196,6 @@ const EditQuestPage = ({ questId, onBack }) => {
         </div>
         
         {/* Quest Inputs and Outputs */}
-         {/* Quest Inputs and Outputs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
         {/* Repeat this block for each test case (0 to 9) */}
         {[...Array(10)].map((_, index) => (

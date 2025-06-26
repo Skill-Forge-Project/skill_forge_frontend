@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { login } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import Modal from "../Layout/Modal";
 
 export default function LoginForm() {
+  const location = useLocation();
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -19,13 +25,23 @@ export default function LoginForm() {
       const response = await login(form);
       localStorage.setItem("token", response.access_token);
       localStorage.setItem("userId", response.user_id);
-      // alert("Login successful");
+      // alert("Login successful"); // Debug only!
       navigate("/dashboard");
 
     } catch (err) {
       setError(err.message);
     }
   };
+
+  useEffect(() => {
+    if (location.state?.showModal) {
+      setShowModal(true);
+      setModalMessage(location.state.modalMessage || "Welcome!");
+      
+      // Optional: prevent modal from showing again on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
 
   return (
@@ -124,10 +140,10 @@ export default function LoginForm() {
                 </div>
 
                 {error && (
-                <div className="text-red-500 text-sm mt-2">
-                  <p>{error}</p> {/* Display error message */}
-                </div>
-              )}
+                  <div className="text-red-500 text-sm mt-2">
+                    <p>{error}</p> {/* Display error message */}
+                  </div>
+                )}
 
                 <div className="text-sm">
                   <a
@@ -168,6 +184,12 @@ export default function LoginForm() {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title="Registration Complete"
+        message={modalMessage}
+      />
     </div>
   );
 }

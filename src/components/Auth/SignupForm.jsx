@@ -33,15 +33,15 @@ export default function SignupForm() {
     // Call the signup service to create the user
     try {
       const result = await signup(form);
-      console.log("Signup result:", result);
-    
+      
       if (result.success) {
-        navigate("/");
+        navigate("/", {
+          state: { showModal: true, modalMessage: "Your account was created successfully!" },
+        });
       } else {
         setError(result.message || "Signup failed");
       }
     } catch (err) {
-      console.error("Signup threw an error:", err);
       setError("An error occurred while signing up.");
     }
   };

@@ -1,3 +1,9 @@
+name: Check for print/console.log statements
+
+on:
+  pull_request:
+    branches: [ master ]
+    
 jobs:
   call-lint-check:
     uses: Skill-Forge-Project/ci-templates/.github/workflows/lint-check.yml@master

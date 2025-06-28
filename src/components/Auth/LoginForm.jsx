@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { login } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import Modal from "../Layout/Modal";
 
 export default function LoginForm() {
+  const location = useLocation();
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -19,7 +25,7 @@ export default function LoginForm() {
       const response = await login(form);
       localStorage.setItem("token", response.access_token);
       localStorage.setItem("userId", response.user_id);
-      // alert("Login successful");
+      // alert("Login successful"); // Debug only!
       navigate("/dashboard");
 
     } catch (err) {
@@ -27,9 +33,19 @@ export default function LoginForm() {
     }
   };
 
+  useEffect(() => {
+    if (location.state?.showModal) {
+      setShowModal(true);
+      setModalMessage(location.state.modalMessage || "Welcome!");
+      
+      // Optional: prevent modal from showing again on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
 
   return (
-    <div className="min-h-screen flex fle-col items-center justify-center bg-gradient-to-b from-[#141e30] to-[#123556]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#141e30] to-[#123556]">
       <div className="py-6 px-4">
         <div className="grid md:grid-cols-2 items-center gap-6 max-w-6xl w-full ">
           <div className="border border-slate-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto primary_object">
@@ -124,10 +140,10 @@ export default function LoginForm() {
                 </div>
 
                 {error && (
-                <div className="text-red-500 text-sm mt-2">
-                  <p>{error}</p> {/* Display error message */}
-                </div>
-              )}
+                  <div className="text-red-500 text-sm mt-2">
+                    <p>{error}</p> {/* Display error message */}
+                  </div>
+                )}
 
                 <div className="text-sm">
                   <a
@@ -168,6 +184,12 @@ export default function LoginForm() {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title="Registration Complete"
+        message={modalMessage}
+      />
     </div>
   );
 }

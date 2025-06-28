@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 
 export default function SignupForm() {
   const [form, setForm] = useState({
-    name: "",
+    username: "",
+    firstName: "",
+    lastName: "",
     email: "",
-    password: "",
-    confirmPassword: "",
+    password: ""
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -20,21 +21,28 @@ export default function SignupForm() {
     e.preventDefault();
 
     // Basic validation
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    if (!form.name || !form.email || !form.password) {
+    // if (form.password !== form.confirmPassword) {
+    //   setError("Passwords do not match");
+    //   return;
+    // }
+    if (!form.username || !form.email || !form.password) {
       setError("Please fill in all fields");
       return;
     }
 
     // Call the signup service to create the user
-    const result = await signup(form);
-    if (result.success) {
-      navigate("/login"); // Redirect to login page on success
-    } else {
-      setError(result.message || "Signup failed");
+    try {
+      const result = await signup(form);
+      
+      if (result.success) {
+        navigate("/", {
+          state: { showModal: true, modalMessage: "Your account was created successfully!" },
+        });
+      } else {
+        setError(result.message || "Signup failed");
+      }
+    } catch (err) {
+      setError("An error occurred while signing up.");
     }
   };
 
@@ -43,7 +51,7 @@ export default function SignupForm() {
       <div className="py-6 px-4">
         <div className="grid md:grid-cols-2 items-center gap-6 max-w-6xl w-full">
           <div className="border border-slate-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto primary_object">
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="mb-12">
                 <h3 className="text-3xl font-semibold primary_text">Sign up</h3>
                 <p className="text-slate-500 text-sm mt-6 leading-relaxed secondary_text">
@@ -62,7 +70,9 @@ export default function SignupForm() {
                     name="username"
                     type="text"
                     required
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600"
+                    value={form.username}
+                    onChange={handleChange}
+                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
                     placeholder="Enter username"
                   />
                 </div>
@@ -78,7 +88,9 @@ export default function SignupForm() {
                     name="firstName"
                     type="text"
                     required
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
                     placeholder="Enter first name"
                   />
                 </div>
@@ -94,7 +106,9 @@ export default function SignupForm() {
                     name="lastName"
                     type="text"
                     required
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
                     placeholder="Enter last name"
                   />
                 </div>
@@ -110,7 +124,9 @@ export default function SignupForm() {
                     name="email"
                     type="email"
                     required
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600"
+                    value={form.email}
+                    onChange={handleChange}
+                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
                     placeholder="Enter email"
                   />
                 </div>
@@ -126,7 +142,9 @@ export default function SignupForm() {
                     name="password"
                     type="password"
                     required
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600"
+                    value={form.password}
+                    onChange={handleChange}
+                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
                     placeholder="Enter password"
                   />
                 </div>

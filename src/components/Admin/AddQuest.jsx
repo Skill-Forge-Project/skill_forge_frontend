@@ -62,6 +62,19 @@ const AddQuest = () => {
       if (response.ok) {
         setModalMessage("Quest created successfully!");
         setModalOpen(true);
+        // Reset form data
+        setFormData({
+          quest_name: "",
+          quest_language: "",
+          quest_difficulty: "",
+          quest_condition: "",
+          function_template: "",
+          example_solution: "",
+          ...Array.from({ length: 10 }, (_, i) => ({
+            [`input_${i}`]: "",
+            [`output_${i}`]: ""
+          })).reduce((acc, curr) => ({ ...acc, ...curr }), {})
+        });
       } else {
         console.error("Error:", data.error);
         setModalMessage("Quest creation failed: " + (data.error || "Unknown error"));

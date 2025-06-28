@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import "github-markdown-css/github-markdown.css";
 import CodeEditor from "../Layout/CodeEditor";
+import Modal from "../Layout/Modal";
 
 const AddQuest = () => {
   const userId = localStorage.getItem("userId");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const QUEST_API = import.meta.env.VITE_QUESTS_SERVICE_URL;
 
   const [formData, setFormData] = useState({
@@ -14,7 +17,7 @@ const AddQuest = () => {
     quest_inputs: "",
     quest_outputs: "",
     function_template: "",
-    quest_unitests: "",
+    example_solution: "",
   });
 
   const handleChange = (e) => {
@@ -28,38 +31,59 @@ const AddQuest = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        language: formData.quest_language,
+        difficulty: formData.quest_difficulty,
+        quest_name: formData.quest_name,
+        quest_author: userId,
+        condition: formData.quest_condition,
+        function_template: formData.function_template,
+        example_solution: formData.example_solution,
+        type: "Basic"
+      };
+      
+      // Append each test input/output
+      for (let i = 0; i < 10; i++) {
+        payload[`input_${i}`] = formData[`input_${i}`] || "";
+        payload[`output_${i}`] = formData[`output_${i}`] || "";
+      }
+      
       const response = await fetch(`${QUEST_API}/quests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          language: formData.quest_language,
-          difficulty: formData.quest_difficulty,
-          quest_name: formData.quest_name,
-          quest_author: userId,
-          condition: formData.quest_condition,
-          function_template: formData.function_template,
-          unit_tests: formData.quest_unitests,
-          test_inputs: formData.quest_inputs,
-          test_outputs: formData.quest_outputs,
-          type: "Basic",
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert("Quest added successfully!");
-        console.log("Quest ID:", data.quest_id);
+        setModalMessage("Quest created successfully!");
+        setModalOpen(true);
+        // Reset form data
+        setFormData({
+          quest_name: "",
+          quest_language: "",
+          quest_difficulty: "",
+          quest_condition: "",
+          function_template: "",
+          example_solution: "",
+          ...Array.from({ length: 10 }, (_, i) => ({
+            [`input_${i}`]: "",
+            [`output_${i}`]: ""
+          })).reduce((acc, curr) => ({ ...acc, ...curr }), {})
+        });
       } else {
         console.error("Error:", data.error);
-        alert("Failed to add quest.");
+        setModalMessage("Quest creation failed: " + (data.error || "Unknown error"));
+        setModalOpen(true);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      alert("An error occurred.");
+      setModalMessage("Quest creation failed: " + (error.message || "Unknown error"));
+      setModalOpen(true);
     }
   };
 
@@ -205,17 +229,17 @@ const AddQuest = () => {
       <div className="flex flex-col space-y-4 w-full">
         <label
           className="primary_object secondary_text p-2 w-full"
-          htmlFor="quest_unitests"
+          htmlFor="example_solution"
         >
           Example Solution
         </label>
         <CodeEditor
           language={formData.quest_language}
-          code={formData.quest_unitests}
+          code={formData.example_solution}
           onChange={(val) =>
             setFormData((prev) => ({
               ...prev,
-              quest_unitests: val,
+              example_solution: val,
             }))
           }
         />
@@ -226,6 +250,13 @@ const AddQuest = () => {
           Submit Quest
         </button>
       </div>
+      {/* Modal for create new quest */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Create New Quest"
+        message={modalMessage}
+      />
     </form>
   );
 };

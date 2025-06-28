@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import "github-markdown-css/github-markdown.css";
 import CodeEditor from "../Layout/CodeEditor";
+import Modal from "../Layout/Modal";
 
 const AddQuest = () => {
   const userId = localStorage.getItem("userId");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const QUEST_API = import.meta.env.VITE_QUESTS_SERVICE_URL;
 
   const [formData, setFormData] = useState({
@@ -57,15 +60,17 @@ const AddQuest = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Quest added successfully!");
-        console.log("Quest ID:", data.quest_id);
+        setModalMessage("Quest created successfully!");
+        setModalOpen(true);
       } else {
         console.error("Error:", data.error);
-        alert("Failed to add quest.");
+        setModalMessage("Quest creation failed: " + (data.error || "Unknown error"));
+        setModalOpen(true);
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      alert("An error occurred.");
+      setModalMessage("Quest creation failed: " + (error.message || "Unknown error"));
+      setModalOpen(true);
     }
   };
 
@@ -232,6 +237,13 @@ const AddQuest = () => {
           Submit Quest
         </button>
       </div>
+      {/* Modal for create new quest */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Create New Quest"
+        message={modalMessage}
+      />
     </form>
   );
 };

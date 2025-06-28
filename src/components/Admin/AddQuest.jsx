@@ -14,7 +14,7 @@ const AddQuest = () => {
     quest_inputs: "",
     quest_outputs: "",
     function_template: "",
-    quest_unitests: "",
+    example_solution: "",
   });
 
   const handleChange = (e) => {
@@ -28,24 +28,30 @@ const AddQuest = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        language: formData.quest_language,
+        difficulty: formData.quest_difficulty,
+        quest_name: formData.quest_name,
+        quest_author: userId,
+        condition: formData.quest_condition,
+        function_template: formData.function_template,
+        example_solution: formData.example_solution,
+        type: "Basic"
+      };
+      
+      // Append each test input/output
+      for (let i = 0; i < 10; i++) {
+        payload[`input_${i}`] = formData[`input_${i}`] || "";
+        payload[`output_${i}`] = formData[`output_${i}`] || "";
+      }
+      
       const response = await fetch(`${QUEST_API}/quests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          language: formData.quest_language,
-          difficulty: formData.quest_difficulty,
-          quest_name: formData.quest_name,
-          quest_author: userId,
-          condition: formData.quest_condition,
-          function_template: formData.function_template,
-          unit_tests: formData.quest_unitests,
-          test_inputs: formData.quest_inputs,
-          test_outputs: formData.quest_outputs,
-          type: "Basic",
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -205,17 +211,17 @@ const AddQuest = () => {
       <div className="flex flex-col space-y-4 w-full">
         <label
           className="primary_object secondary_text p-2 w-full"
-          htmlFor="quest_unitests"
+          htmlFor="example_solution"
         >
           Example Solution
         </label>
         <CodeEditor
           language={formData.quest_language}
-          code={formData.quest_unitests}
+          code={formData.example_solution}
           onChange={(val) =>
             setFormData((prev) => ({
               ...prev,
-              quest_unitests: val,
+              example_solution: val,
             }))
           }
         />

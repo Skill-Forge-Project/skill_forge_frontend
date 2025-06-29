@@ -52,6 +52,8 @@ export const checkValidToken = async (responseStatus) => {
 
       return true;
     }
+
+    return false;
   }
 
   return true;

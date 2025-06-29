@@ -6,6 +6,7 @@ import Achievements from "../components/UserProfile/Achievements";
 import UserStats from "../components/UserProfile/UserStats";
 import Modal from "../components/Layout/Modal";
 import { getUserById, getAvatarUrl } from "../services/usersService";
+import { checkValidToken } from "../services/authService";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -37,20 +38,26 @@ const ProfilePage = () => {
           },
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch avatar");
-        }
+        const isTokenValid = await checkValidToken(response.status);
 
-        // Convert blob to object URL
-        const imageBlob = await response.blob();
-        const imageObjectUrl = URL.createObjectURL(imageBlob);
-        setAvatarUrl(imageObjectUrl);
+        if (isTokenValid) {
+          if (!response.ok) {
+            throw new Error("Failed to fetch avatar");
+          }
+
+          // Convert blob to object URL
+          const imageBlob = await response.blob();
+          const imageObjectUrl = URL.createObjectURL(imageBlob);
+          setAvatarUrl(imageObjectUrl);
+        } else {
+          console.error("Error fetching avatar URL:", err.message);
+        }
       } catch (err) {
         console.error("Error fetching avatar URL:", err.message);
       }
     };
 
-    if (userId && token) {
+    if (userId) {
       fetchUserData();
       fetchAvatarUrl();
     }

@@ -16,7 +16,7 @@ export default function Navbar() {
 
 
   useEffect(() => {
-    if (userId && token) {
+    if (userId) {
       getAvatarUrl(userId, token, USER_API).then((url) => {
         setAvatarUrl(url);
       });

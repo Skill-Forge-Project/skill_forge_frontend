@@ -8,6 +8,7 @@ import InstagramIcon from "../../assets/img/social_media_icons/instagram.png";
 import GithubIcon from "../../assets/img/social_media_icons/github.svg";
 import DiscordIcon from "../../assets/img/social_media_icons/discord.svg";
 import LinkedInIcon from "../../assets/img/social_media_icons/linkedin.png";
+import { checkValidToken } from "../../services/authService";
 
 const ProfileMain = ({ user, setModalOpen, setModalMessage }) => {
   const [formData, setFormData] = useState({
@@ -59,10 +60,17 @@ const ProfileMain = ({ user, setModalOpen, setModalMessage }) => {
         }
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Upload failed");
-      setModalMessage("Avatar updated successfully!");
-      setModalOpen(true);
+      const isTokenValid = await checkValidToken(res.status);
+
+      if (isTokenValid) {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Upload failed");
+        setModalMessage("Avatar updated successfully!");
+        setModalOpen(true);
+      } else {
+        setModalMessage("Avatar upload failed.");
+        setModalOpen(true);
+      }
     } catch (err) {
       setModalMessage("Avatar upload failed.");
       setModalOpen(true);

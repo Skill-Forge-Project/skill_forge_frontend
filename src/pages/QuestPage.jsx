@@ -9,6 +9,7 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import CodeEditor from "../components/Layout/CodeEditor";
 import { getQuestById } from "../services/questsServices";
 import { getUserById } from "../services/usersService";
+import { checkValidToken } from "../services/authService";
 
 const QuestPage = () => {
   const { questId } = useParams();
@@ -64,20 +65,26 @@ const QuestPage = () => {
           },
         });
 
-        if (!response.ok) {
+        const isTokenValid = await checkValidToken(response.status);
+
+        if (isTokenValid) {
+          if (!response.ok) {
+            throw new Error("Failed to fetch avatar");
+          }
+
+          // Convert blob to object URL
+          const imageBlob = await response.blob();
+          const imageObjectUrl = URL.createObjectURL(imageBlob);
+          setAvatarUrl(imageObjectUrl);
+        } else {
           throw new Error("Failed to fetch avatar");
         }
-
-        // Convert blob to object URL
-        const imageBlob = await response.blob();
-        const imageObjectUrl = URL.createObjectURL(imageBlob);
-        setAvatarUrl(imageObjectUrl);
       } catch (err) {
         console.error("Error fetching avatar URL:", err.message);
       }
     };
 
-    if (userId && token) {
+    if (userId) {
       fetchUserData();
       fetchAvatarUrl();
     }
@@ -94,11 +101,19 @@ const QuestPage = () => {
             "Content-Type": "application/json",
           },
         });
-        if (!response.ok) {
+
+        const isTokenValid = await checkValidToken(response.status);
+
+        if (isTokenValid) {
+          if (!response.ok) {
+            throw new Error("Failed to fetch comments");
+          }
+          
+          const data = await response.json();
+          setComments(data);
+        } else {
           throw new Error("Failed to fetch comments");
         }
-        const data = await response.json();
-        setComments(data);
       } catch (error) {
         console.error("Error fetching comments:", error);
       }
@@ -107,16 +122,18 @@ const QuestPage = () => {
   }, [QUEST_API, questId, token]);
 
   // Handle comment submission
-  const handleCommentSubmit = () => {
+  const handleCommentSubmit = async () => {
     if (!comment.trim()) {
       alert("Please write a comment before submitting.");
       return;
     }
+
     const data = {
       quest_id: questId,
       user_id: userId,
       comment: comment,
     };
+
     const options = {
       method: "POST",
       headers: {
@@ -125,26 +142,28 @@ const QuestPage = () => {
       },
       body: JSON.stringify(data),
     };
-    fetch(`${QUEST_API}/comments/${questId}`, options)
-      .then((response) => {
+
+    try {
+      const response = await fetch(`${QUEST_API}/comments/${questId}`, options);
+
+      const isTokenValid = await checkValidToken(response.status);
+
+      if (isTokenValid) {
         if (!response.ok) {
           throw new Error("Failed to submit quest");
         }
-        return response.json();
-      })
-      .then((data) => {
 
-        // console.log("Quest submitted successfully:", data);
         window.location.reload(); 
-      })
-      .catch((error) => {
-        // console.error("Error submitting quest:", error);
-        alert("Error submitting quest. Please try again.");
-      });
+      } else {
+        alert("Error submitting comment. Please try again.");
+      }
+    } catch (error) {
+      alert("Error submitting comment. Please try again.");
+    }
   };
 
   // Handle quest submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!code.trim()) {
       alert("Please write a solution before submitting.");
       return;
@@ -165,23 +184,29 @@ const QuestPage = () => {
       },
       body: JSON.stringify(data),
     };
-    fetch(`${QUEST_API}/submit/${questId}`, options)
-      .then((response) => {
+
+    try {
+      const response = await fetch(`${QUEST_API}/submit/${questId}`, options);
+
+      const isTokenValid = await checkValidToken(response.status);
+
+      if (isTokenValid) {
         if (!response.ok) {
           throw new Error("Failed to submit quest");
         }
-        return response.json();
-      })
-      .then((data) => {
+
+        const data = await response.json();
+
         // console.log("Quest submitted successfully:", data);
         setCooldown(30);
         setExecutionResults(data);
         // alert("Quest submitted successfully!");
-      })
-      .catch((error) => {
-        // console.error("Error submitting quest:", error);
+      } else {
         alert("Error submitting quest. Please try again.");
-      });
+      }
+    } catch (error) {
+      alert("Error submitting quest. Please try again.");
+    }
   };
 
   // Handle cooldown

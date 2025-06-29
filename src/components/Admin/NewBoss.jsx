@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from "../Layout/Modal";
+import { checkValidToken } from '../../services/authService';
 
 const NewBoss = () => {
   const UNDERWORLD_API_URL = import.meta.env.VITE_UNDERWORLD_SERVICE_URL;
@@ -44,11 +45,18 @@ const NewBoss = () => {
         }),
       });
 
-      const data = await response.json();
+      const isTokenValid = await checkValidToken(response.status);
 
-      if (response.ok) {
-        setModalMessage("Boss created successfully!");
-        setModalOpen(true);
+      if (isTokenValid) {
+        const data = await response.json();
+
+        if (response.ok) {
+          setModalMessage("Boss created successfully!");
+          setModalOpen(true);
+        } else {
+          setModalMessage("Boss creation failed: " + (data.message || "Unknown error"));
+          setModalOpen(true);
+        }
       } else {
         setModalMessage("Boss creation failed: " + (data.message || "Unknown error"));
         setModalOpen(true);

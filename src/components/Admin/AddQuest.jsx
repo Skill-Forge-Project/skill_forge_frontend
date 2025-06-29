@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "github-markdown-css/github-markdown.css";
 import CodeEditor from "../Layout/CodeEditor";
 import Modal from "../Layout/Modal";
+import { checkValidToken } from "../../services/authService";
 
 const AddQuest = () => {
   const userId = localStorage.getItem("userId");
@@ -57,24 +58,32 @@ const AddQuest = () => {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const isTokenValid = await checkValidToken(response.status);
 
-      if (response.ok) {
-        setModalMessage("Quest created successfully!");
-        setModalOpen(true);
-        // Reset form data
-        setFormData({
-          quest_name: "",
-          quest_language: "",
-          quest_difficulty: "",
-          quest_condition: "",
-          function_template: "",
-          example_solution: "",
-          ...Array.from({ length: 10 }, (_, i) => ({
-            [`input_${i}`]: "",
-            [`output_${i}`]: ""
-          })).reduce((acc, curr) => ({ ...acc, ...curr }), {})
-        });
+      if (isTokenValid) {
+        const data = await response.json();
+
+        if (response.ok) {
+          setModalMessage("Quest created successfully!");
+          setModalOpen(true);
+          // Reset form data
+          setFormData({
+            quest_name: "",
+            quest_language: "",
+            quest_difficulty: "",
+            quest_condition: "",
+            function_template: "",
+            example_solution: "",
+            ...Array.from({ length: 10 }, (_, i) => ({
+              [`input_${i}`]: "",
+              [`output_${i}`]: ""
+            })).reduce((acc, curr) => ({ ...acc, ...curr }), {})
+          });
+        } else {
+          console.error("Error:", data.error);
+          setModalMessage("Quest creation failed: " + (data.error || "Unknown error"));
+          setModalOpen(true);
+        }
       } else {
         console.error("Error:", data.error);
         setModalMessage("Quest creation failed: " + (data.error || "Unknown error"));

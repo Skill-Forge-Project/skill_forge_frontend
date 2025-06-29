@@ -24,6 +24,7 @@ export default function LoginForm() {
     try {
       const response = await login(form);
       localStorage.setItem("token", response.access_token);
+      localStorage.setItem("refresh_token", response.refresh_token)
       localStorage.setItem("userId", response.user_id);
       // alert("Login successful"); // Debug only!
       navigate("/dashboard");

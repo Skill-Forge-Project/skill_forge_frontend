@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { editQuestById } from "../../services/questsServices";
 import CodeEditor from "../Layout/CodeEditor";
 import Modal from "../Layout/Modal";
+import { checkValidToken } from "../../services/authService";
 
 
 const EditQuestPage = ({ questId, onBack }) => {
@@ -96,12 +97,19 @@ const EditQuestPage = ({ questId, onBack }) => {
         },
         body: JSON.stringify(payload),
       });
+
+      const isTokenValid = await checkValidToken(response.status);
+
+      if (isTokenValid) {
+        const data = await response.json();
   
-      const data = await response.json();
-  
-      if (response.ok) {
-        setModalMessage("Quest updated successfully!");
-        setModalOpen(true);
+        if (response.ok) {
+          setModalMessage("Quest updated successfully!");
+          setModalOpen(true);
+        } else {
+          setModalMessage("Failed to update quest.");
+          setModalOpen(true);
+        }
       } else {
         setModalMessage("Failed to update quest.");
         setModalOpen(true);

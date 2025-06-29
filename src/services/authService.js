@@ -34,6 +34,8 @@ export const signup = async (data) => {
 };
 
 
+// Checks if access token is valid
+// If access token has expired, a request to the refresh_access_token endpoint is sent and the access token is reset
 export const checkValidToken = async (responseStatus) => {
   if (responseStatus === 401) {
     const refreshToken = localStorage.getItem("refresh_token");

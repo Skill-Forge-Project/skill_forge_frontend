@@ -30,17 +30,22 @@ const EditQuestPage = ({ questId, onBack }) => {
   useEffect(() => {
     const fetchQuest = async () => {
       try {
-        const data = await editQuestById(questId); // should return the quest by ID
-        setFormData({
+        const data = await editQuestById(questId);
+        const fetchedData = {
           quest_name: data.quest_name || "",
           quest_language: data.language || "",
           quest_difficulty: data.difficulty || "",
           quest_condition: data.condition || "",
-          quest_inputs: data.test_inputs || "",
-          quest_outputs: data.test_outputs || "",
           function_template: data.function_template || "",
-          quest_solution: data.example_solution || "",
-        });
+          example_solution: data.example_solution || "",
+        };
+
+        for (let i = 0; i < 10; i++) {
+          fetchedData[`input_${i}`] = data[`input_${i}`] || "";
+          fetchedData[`output_${i}`] = data[`output_${i}`] || "";
+        }
+
+        setFormData(fetchedData);
       } catch (error) {
         console.error("Error fetching quest:", error);
         setMessage("Failed to load quest.");
@@ -63,20 +68,8 @@ const EditQuestPage = ({ questId, onBack }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-  
+
     try {
-      // Prepare inputs and outputs dynamically
-      const inputs = {};
-      const outputs = {};
-  
-      formData.quest_inputs.forEach((val, i) => {
-        inputs[`input_${i}`] = val;
-      });
-  
-      formData.quest_outputs.forEach((val, i) => {
-        outputs[`output_${i}`] = val;
-      });
-  
       const payload = {
         language: formData.quest_language,
         difficulty: formData.quest_difficulty,
@@ -84,11 +77,15 @@ const EditQuestPage = ({ questId, onBack }) => {
         quest_author: userId,
         condition: formData.quest_condition,
         example_solution: formData.example_solution,
+        function_template: formData.function_template,
         type: "Basic",
-        ...inputs,
-        ...outputs,
       };
-  
+
+      for (let i = 0; i < 10; i++) {
+        payload[`input_${i}`] = formData[`input_${i}`] || "";
+        payload[`output_${i}`] = formData[`output_${i}`] || "";
+      }
+
       const response = await fetch(`${QUESTS_API}/quests/${questId}`, {
         method: "PUT",
         headers: {
@@ -102,10 +99,10 @@ const EditQuestPage = ({ questId, onBack }) => {
 
       if (isTokenValid) {
         const data = await response.json();
-  
+
         if (response.ok) {
-          setModalMessage("Quest updated successfully!");
-          setModalOpen(true);
+          sessionStorage.setItem("questUpdateMessage", "Quest updated successfully!");
+          window.location.href = "/admin";
         } else {
           setModalMessage("Failed to update quest.");
           setModalOpen(true);
@@ -118,7 +115,7 @@ const EditQuestPage = ({ questId, onBack }) => {
       setModalMessage("An error occurred.");
       setModalOpen(true);
     }
-  
+
     setSubmitting(false);
   };
 

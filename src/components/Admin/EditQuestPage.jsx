@@ -101,8 +101,8 @@ const EditQuestPage = ({ questId, onBack }) => {
         const data = await response.json();
 
         if (response.ok) {
-          setModalMessage("Quest updated successfully!");
-          setModalOpen(true);
+          sessionStorage.setItem("questUpdateMessage", "Quest updated successfully!");
+          window.location.href = "/admin";
         } else {
           setModalMessage("Failed to update quest.");
           setModalOpen(true);

@@ -1,5 +1,3 @@
-import { checkValidToken } from "./authService";
-
 const UNDERWORLD_API_URL = import.meta.env.VITE_UNDERWORLD_SERVICE_URL;
 
 // Get all boses from the Underworld Service

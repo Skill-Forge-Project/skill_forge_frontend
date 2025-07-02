@@ -22,7 +22,7 @@ export default function Navbar() {
         setAvatarUrl(url);
       });
     }
-  }, [accessToken]);
+  }, []);
 
   return (
     <nav className="p-0 flex justify-between items-center navbar_bg">

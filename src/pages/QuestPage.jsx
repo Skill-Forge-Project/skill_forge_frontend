@@ -9,7 +9,6 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import CodeEditor from "../components/Layout/CodeEditor";
 import { getQuestById } from "../services/questsServices";
 import { getUserById } from "../services/usersService";
-import { checkValidToken } from "../services/authService";
 import { AuthContext } from "../contexts/AuthContext";
 
 const QuestPage = () => {

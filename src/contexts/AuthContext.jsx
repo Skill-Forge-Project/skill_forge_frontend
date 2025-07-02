@@ -2,12 +2,14 @@ import { createContext, useState } from "react";
 
 export const AuthContext = createContext();
 
+const AUTH_API = import.meta.env.VITE_AUTH_API;
+
 export function AuthProvider({ children }) {
 
     const [accessToken, setAccessToken] = useState(() => {
-        const accessToken = JSON.parse(localStorage.getItem('token'));
+        const accessToken = localStorage.getItem('token');
 
-        if (accessToken) {
+        if (!accessToken) {
             return '';
         }
 
@@ -37,7 +39,7 @@ export function AuthProvider({ children }) {
           const newAccessToken = await res.json();
 
           localStorage.setItem("token", newAccessToken.access_token);
-          setAccessToken(newAccessToken);
+          setAccessToken(newAccessToken.access_token);
     
           return true;
         }

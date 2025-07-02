@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../../components/Layout/Navbar";
 import { getBossById } from "../../services/underworldService";
@@ -9,6 +9,7 @@ import "github-markdown-css/github-markdown.css";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import LoadingSpinner from "../../components/Layout/LoadingSpinner";
+import { AuthContext } from "../../contexts/AuthContext";
 
 
 
@@ -17,16 +18,17 @@ const BossChallengePage = () => {
   const [boss, setBoss] = useState(null);
   const [challenge, setChallenge] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { accessToken, checkValidToken } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchBossAndChallenge = async () => {
       try {
         // Fetch boss details by bossId
-        const bossData = await getBossById(bossId);
+        const bossData = await getBossById(bossId, accessToken, checkValidToken);
         setBoss(bossData);
 
         // Fetch challenge for this boss
-        const challengeData = await generateChallenge(bossId);
+        const challengeData = await generateChallenge(accessToken, checkValidToken, bossId);
         setChallenge(challengeData);
       } catch (error) {
         console.error("Failed to fetch boss or challenge:", error);

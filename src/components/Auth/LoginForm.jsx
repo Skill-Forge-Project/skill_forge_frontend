@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { login } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import Modal from "../Layout/Modal";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export default function LoginForm() {
   const location = useLocation();
@@ -11,6 +12,7 @@ export default function LoginForm() {
   const [modalMessage, setModalMessage] = useState("");
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
+  const { accessTokenSetter } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -23,7 +25,7 @@ export default function LoginForm() {
 
     try {
       const response = await login(form);
-      localStorage.setItem("token", response.access_token);
+      accessTokenSetter(response.access_token);
       localStorage.setItem("refresh_token", response.refresh_token)
       localStorage.setItem("userId", response.user_id);
       // alert("Login successful"); // Debug only!

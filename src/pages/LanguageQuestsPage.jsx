@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import QuestsTable  from "../components/Quests/QuestsTable";
 import Navbar from "../components/Layout/Navbar";
 import { getQuestsByLanguage } from "../services/questsServices";
+import { AuthContext } from "../contexts/AuthContext";
 
 const QuestsPage = () => {
   const { language } = useParams(); // get language from URL
   const [quests, setQuests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { accessToken, checkValidToken } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchQuests = async () => {
       try {
-        const questsData = await getQuestsByLanguage(language);
+        const questsData = await getQuestsByLanguage(language, accessToken, checkValidToken);
         setQuests(questsData);
       } catch (err) {
         setError(err.message);

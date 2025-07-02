@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { use, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Layout/Navbar";
 import ReactMarkdown from "react-markdown";
@@ -10,6 +10,7 @@ import CodeEditor from "../components/Layout/CodeEditor";
 import { getQuestById } from "../services/questsServices";
 import { getUserById } from "../services/usersService";
 import { checkValidToken } from "../services/authService";
+import { AuthContext } from "../contexts/AuthContext";
 
 const QuestPage = () => {
   const { questId } = useParams();
@@ -25,9 +26,8 @@ const QuestPage = () => {
   const [code, setCode] = useState("# Write your code here");
   const [executionResults, setExecutionResults] = useState(null);
   const [cooldown, setCooldown] = useState(0);
-
+  const { accessToken, checkValidToken } = useContext(AuthContext);
   const userId = localStorage.getItem("userId");
-  const token = localStorage.getItem("token");
   const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
   const QUEST_API = import.meta.env.VITE_QUESTS_SERVICE_URL;
 
@@ -35,7 +35,7 @@ const QuestPage = () => {
   useEffect(() => {
     const fetchQuest = async () => {
       try {
-        const questData = await getQuestById(questId);
+        const questData = await getQuestById(questId, accessToken, checkValidToken);
         setQuest(questData);
       } catch (err) {
         console.error("Error fetching quest:", err.message);
@@ -61,7 +61,7 @@ const QuestPage = () => {
         const response = await fetch(`${USER_API}/users/${userId}/avatar`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
 
@@ -88,7 +88,7 @@ const QuestPage = () => {
       fetchUserData();
       fetchAvatarUrl();
     }
-  }, [USER_API, userId, token]);
+  }, [USER_API, userId, accessToken]);
 
   // Handle loading all the comments
   useEffect(() => {
@@ -97,7 +97,7 @@ const QuestPage = () => {
         const response = await fetch(`${QUEST_API}/comments/${questId}`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         });
@@ -119,7 +119,7 @@ const QuestPage = () => {
       }
     };
     fetchComments();
-  }, [QUEST_API, questId, token]);
+  }, [QUEST_API, questId, accessToken]);
 
   // Handle comment submission
   const handleCommentSubmit = async () => {
@@ -138,7 +138,7 @@ const QuestPage = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(data),
     };
@@ -180,7 +180,7 @@ const QuestPage = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(data),
     };

@@ -1,14 +1,11 @@
-import { checkValidToken } from "./authService";
-
 const QUESTS_API = import.meta.env.VITE_QUESTS_SERVICE_URL;
 
 // Get all quests from the Quests Service
-export const getAllQuests = async () => {
-  const token = localStorage.getItem("token");
+export const getAllQuests = async (accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quests`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -23,12 +20,11 @@ export const getAllQuests = async () => {
 };
 
 // Get all quests by language from the Quests Service
-export const getQuestsByLanguage = async (language) => {
-  const token = localStorage.getItem("token");
+export const getQuestsByLanguage = async (language, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quests/${language}`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -43,12 +39,11 @@ export const getQuestsByLanguage = async (language) => {
 };
 
 // Get a single quest by ID from the Quests Service
-export const getQuestById = async (questId) => {
-  const token = localStorage.getItem("token");
+export const getQuestById = async (questId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quest/${questId}`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -64,12 +59,11 @@ export const getQuestById = async (questId) => {
 
 
 // Get a single quest by ID from the Quests Service for Edit Quest Page in Admin Dashboard
-export const editQuestById = async (questId) => {
-  const token = localStorage.getItem("token");
+export const editQuestById = async (questId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/edit_quest/${questId}`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -84,12 +78,11 @@ export const editQuestById = async (questId) => {
 };
 
 // Get all solutions for a user
-export const getSolvedQuestsByUserId = async (userId) => {
-  const token = localStorage.getItem("token");
+export const getSolvedQuestsByUserId = async (userId, accessToken) => {
   const res = await fetch(`${QUESTS_API}/solutions/${userId}`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -104,12 +97,11 @@ export const getSolvedQuestsByUserId = async (userId) => {
 };
 
 // Get all correct solutions for a user
-export const getCorrectSolutionsByUserId = async (userId) => {
-  const token = localStorage.getItem("token");
+export const getCorrectSolutionsByUserId = async (userId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/correct_solutions/${userId}`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 

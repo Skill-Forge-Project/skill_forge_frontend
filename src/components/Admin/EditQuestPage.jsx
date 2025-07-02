@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { editQuestById } from "../../services/questsServices";
 import CodeEditor from "../Layout/CodeEditor";
 import Modal from "../Layout/Modal";
-import { checkValidToken } from "../../services/authService";
+import { AuthContext } from "../../contexts/AuthContext";
 
 
 const EditQuestPage = ({ questId, onBack }) => {
@@ -24,13 +24,13 @@ const EditQuestPage = ({ questId, onBack }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const userId = localStorage.getItem("user_id");
-  const token = localStorage.getItem("token");
+  const { accessToken, checkValidToken } = useContext(AuthContext);
   const QUESTS_API = import.meta.env.VITE_QUESTS_SERVICE_URL;
 
   useEffect(() => {
     const fetchQuest = async () => {
       try {
-        const data = await editQuestById(questId);
+        const data = await editQuestById(questId, accessToken, checkValidToken);
         const fetchedData = {
           quest_name: data.quest_name || "",
           quest_language: data.language || "",
@@ -90,7 +90,7 @@ const EditQuestPage = ({ questId, onBack }) => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(payload),
       });

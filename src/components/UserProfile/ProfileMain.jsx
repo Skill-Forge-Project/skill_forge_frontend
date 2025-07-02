@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { updateUser } from "../../services/usersService";
 
@@ -8,7 +8,7 @@ import InstagramIcon from "../../assets/img/social_media_icons/instagram.png";
 import GithubIcon from "../../assets/img/social_media_icons/github.svg";
 import DiscordIcon from "../../assets/img/social_media_icons/discord.svg";
 import LinkedInIcon from "../../assets/img/social_media_icons/linkedin.png";
-import { checkValidToken } from "../../services/authService";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const ProfileMain = ({ user, setModalOpen, setModalMessage }) => {
   const [formData, setFormData] = useState({
@@ -23,11 +23,12 @@ const ProfileMain = ({ user, setModalOpen, setModalMessage }) => {
     linked_in: user.linked_in || "",
   });
   const [avatarFile, setAvatarFile] = useState(null);
+  const { accessToken, checkValidToken } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedUser = await updateUser(user.id, formData);
+      const updatedUser = await updateUser(user.id, formData, accessToken, checkValidToken);
       setModalMessage("Profile updated successfully!");
       setModalOpen(true);
     } catch (err) {
@@ -44,7 +45,6 @@ const ProfileMain = ({ user, setModalOpen, setModalMessage }) => {
     e.preventDefault();
     if (!avatarFile) return;
 
-    const token = localStorage.getItem("token");
     const form = new FormData();
     form.append("avatar", avatarFile);
 
@@ -54,7 +54,7 @@ const ProfileMain = ({ user, setModalOpen, setModalMessage }) => {
         {
           method: "PUT",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           body: form,
         }

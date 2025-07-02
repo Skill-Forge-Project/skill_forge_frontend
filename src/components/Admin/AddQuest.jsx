@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "github-markdown-css/github-markdown.css";
 import CodeEditor from "../Layout/CodeEditor";
 import Modal from "../Layout/Modal";
-import { checkValidToken } from "../../services/authService";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const AddQuest = () => {
   const userId = localStorage.getItem("userId");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const QUEST_API = import.meta.env.VITE_QUESTS_SERVICE_URL;
+  const { accessToken, checkValidToken } = useContext(AuthContext)
 
   const [formData, setFormData] = useState({
     quest_name: "",
@@ -53,7 +54,7 @@ const AddQuest = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(payload),
       });

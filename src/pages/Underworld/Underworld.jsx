@@ -1,17 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import "../../assets/styling/underworld.css";
 import Navbar from "../../components/Layout/Navbar";
 import { useEffect, useState } from 'react';
 import { getAllBosses } from '../../services/underworldService';
+import { AuthContext } from "../../contexts/AuthContext";
 
 const UnderworldPage = () => {
   const [bosses, setBosses] = useState([]);
+  const { accessToken, checkValidToken } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchBosses = async () => {
       try {
-        const data = await getAllBosses();
+        const data = await getAllBosses(accessToken, checkValidToken);
         setBosses(data);
       } catch (error) {
         console.error("Failed to fetch bosses:", error);

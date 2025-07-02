@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from "react-router-dom";
 import { getCorrectSolutionsByUserId } from "../../services/questsServices";
+import { AuthContext } from '../../contexts/AuthContext';
 
 const QuestsTable = ({ quests, mode, onQuestClick }) => {
 
@@ -9,11 +10,12 @@ const QuestsTable = ({ quests, mode, onQuestClick }) => {
   const [solvedFilter, setSolvedFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [solvedQuests, setSolvedQuests] = useState([]);
+  const { accessToken, checkValidToken } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchSolvedQuests = async () => {
       try {
-        const solved = await getCorrectSolutionsByUserId(userId); // Fetch solved quests by user ID
+        const solved = await getCorrectSolutionsByUserId(userId, accessToken, checkValidToken); // Fetch solved quests by user ID
         const solvedQuests = solved.map((s) => s.quest_id);
         setSolvedQuests(solvedQuests);
       } catch (err) {

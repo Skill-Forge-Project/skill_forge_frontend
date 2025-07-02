@@ -3,12 +3,11 @@ import { checkValidToken } from "./authService";
 const UNDERWORLD_API_URL = import.meta.env.VITE_UNDERWORLD_SERVICE_URL;
 
 // Get all boses from the Underworld Service
-export const getAllBosses = async () => {
-  const token = localStorage.getItem("token");
+export const getAllBosses = async (accessToken, checkValidToken) => {
   const res = await fetch(`${UNDERWORLD_API_URL}/bosses`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -23,12 +22,11 @@ export const getAllBosses = async () => {
 };
 
 // Get a single boss by ID from the Underworld Service
-export const getBossById = async (bossId) => {
-  const token = localStorage.getItem("token");
+export const getBossById = async (bossId, accessToken, checkValidToken) => {
   const res = await fetch(`${UNDERWORLD_API_URL}/bosses/${bossId}`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -43,13 +41,11 @@ export const getBossById = async (bossId) => {
 };
 
 // Create a new boss in the Underworld Service (as Admin)
-export const createBoss = async (formData) => {
-  const token = localStorage.getItem("token");
-
+export const createBoss = async (formData, accessToken, checkValidToken) => {
   const res = await fetch(`${UNDERWORLD_API_URL}/bosses`, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
     body: formData,
   });
@@ -65,13 +61,11 @@ export const createBoss = async (formData) => {
 };
 
 // Generate new Underworld Challenge
-export const generateChallenge = async (bossId, challengeData) => {
-  const token = localStorage.getItem("token");
-
+export const generateChallenge = async (accessToken, checkValidToken, bossId, challengeData) => {
   const res = await fetch(`${UNDERWORLD_API_URL}/bosses/${bossId}/challenge`, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(challengeData),

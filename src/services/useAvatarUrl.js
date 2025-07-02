@@ -1,13 +1,9 @@
 // Fetch the user avatar from the server
-
-import { checkValidToken } from "./authService";
-
-
-export async function getAvatarUrl(userId, token, userApiBase) {
+export async function getAvatarUrl(userId, accessToken, checkValidToken, userApiBase) {
     try {
       const response = await fetch(`${userApiBase}/users/${userId}/avatar`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 

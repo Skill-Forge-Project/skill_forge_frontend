@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import QuestsTable from "../Quests/QuestsTable";
 import EditQuestPage from "./EditQuestPage";
 import CodeEditor from "../Layout/CodeEditor";
 import { getAllQuests } from "../../services/questsServices";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const EditQuest = () => {
   const [quests, setQuests] = useState([]);
   const [selectedQuestId, setSelectedQuestId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { accessToken, checkValidToken } = useContext(AuthContext);
 
   const fetchQuests = async () => {
     try {
-      const questsData = await getAllQuests();
+      const questsData = await getAllQuests(accessToken,checkValidToken);
       setQuests(questsData);
     } catch (err) {
       setError(err.message);

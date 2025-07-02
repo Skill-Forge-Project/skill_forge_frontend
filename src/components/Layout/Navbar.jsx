@@ -1,27 +1,28 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getAvatarUrl } from "../../services/useAvatarUrl";
 import "../../assets/styling/navbar.css";
 import { FiSettings } from "react-icons/fi";
 import skillForgeLogo from "../../assets/img/skill_forge_logo.png";
+import { AuthContext } from "../../contexts/AuthContext";
 
 
 
 const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
 
 export default function Navbar() {
-  const token = localStorage.getItem("token");
+  const { accessToken, checkValidToken } = useContext(AuthContext);
   const userId = localStorage.getItem("userId");
   const [avatarUrl, setAvatarUrl] = useState(null);
 
 
   useEffect(() => {
     if (userId) {
-      getAvatarUrl(userId, token, USER_API).then((url) => {
+      getAvatarUrl(userId, accessToken, checkValidToken, USER_API).then((url) => {
         setAvatarUrl(url);
       });
     }
-  }, [token]);
+  }, [accessToken]);
 
   return (
     <nav className="p-0 flex justify-between items-center navbar_bg">

@@ -1,13 +1,10 @@
-import { checkValidToken } from "./authService";
-
 const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
 
 // Get all users from the Users Service
-export const getAllUsers = async () => {
-  const token = localStorage.getItem("token");
+export const getAllUsers = async (accessToken, checkValidToken) => {
   const res = await fetch(`${USER_API}/users`, {
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -22,11 +19,10 @@ export const getAllUsers = async () => {
 };
 
 // Get a single user by ID from the Users Service
-export const getUserById = async (userId) => {
-  const token = localStorage.getItem("token");
+export const getUserById = async (userId, accessToken, checkValidToken) => {
   const res = await fetch(`${USER_API}/users/${userId}`, {
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
   });
 
@@ -41,12 +37,11 @@ export const getUserById = async (userId) => {
 };
 
 // Get user avatar URL
-export const getAvatarUrl = async (userId) => {
-  const token = localStorage.getItem("token");
+export const getAvatarUrl = async (userId, accessToken, checkValidToken) => {
   const res = await fetch(`${USER_API}/users/${userId}/avatar`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
       "Content-Type": "application/json",
 
     },
@@ -62,12 +57,11 @@ export const getAvatarUrl = async (userId) => {
 };
 
 // Update user information based on user ID
-export const updateUser = async (userId, updatedData) => {
-  const token = localStorage.getItem("token");
+export const updateUser = async (userId, updatedData, accessToken, checkValidToken) => {
   const res = await fetch(`${USER_API}/update_user/${userId}`, {
     method: "PUT",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(updatedData),

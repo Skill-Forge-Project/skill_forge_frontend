@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Modal from "../Layout/Modal";
-import { checkValidToken } from '../../services/authService';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const NewBoss = () => {
   const UNDERWORLD_API_URL = import.meta.env.VITE_UNDERWORLD_SERVICE_URL;
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const { accessToken, checkValidToken } = useContext(AuthContext)
 
   const [formData, setFormData] = useState({
     boss_name: '',
@@ -33,7 +34,7 @@ const NewBoss = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           boss_name: formData.boss_name,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Layout/Navbar";
 import ProfileHeader from "../components/UserProfile/ProfileHeader";
 import ProfileMain from "../components/UserProfile/ProfileMain";
@@ -6,23 +6,22 @@ import Achievements from "../components/UserProfile/Achievements";
 import UserStats from "../components/UserProfile/UserStats";
 import Modal from "../components/Layout/Modal";
 import { getUserById, getAvatarUrl } from "../services/usersService";
-import { checkValidToken } from "../services/authService";
+import { AuthContext } from "../contexts/AuthContext";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-
+  const { accessToken, checkValidToken } = useContext(AuthContext)
   const userId = localStorage.getItem("userId");
-  const token = localStorage.getItem("token");
   const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
 
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await getUserById(userId);
+        const userData = await getUserById(userId, accessToken, checkValidToken);
         setUser(userData);
       } catch (err) {
         console.error("Error fetching user data:", err.message);
@@ -34,7 +33,7 @@ const ProfilePage = () => {
         const response = await fetch(`${USER_API}/users/${userId}/avatar`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
 
@@ -61,7 +60,7 @@ const ProfilePage = () => {
       fetchUserData();
       fetchAvatarUrl();
     }
-  }, [userId, token, USER_API]);
+  }, [userId, accessToken, USER_API]);
 
   if (!user) return <div className="text-white">No user data...</div>;
 

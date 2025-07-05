@@ -21,8 +21,8 @@ const QuestPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [editorInstance, setEditorInstance] = useState(null);
-  const [language, setLanguage] = useState("python");
-  const [code, setCode] = useState("# Write your code here");
+  const [language, setLanguage] = useState("");
+  const [code, setCode] = useState();
   const [executionResults, setExecutionResults] = useState(null);
   const [cooldown, setCooldown] = useState(0);
 
@@ -162,6 +162,20 @@ const QuestPage = () => {
     }
   };
 
+  // Handle language change
+  useEffect(() => {
+    if (quest?.language) {
+      setLanguage(quest.language.toLowerCase());
+    }
+  }, [quest]);
+
+  // Handle quest template code
+  useEffect(() => {
+    if (quest?.function_template) {
+      setCode(quest.function_template);
+    }
+  }, [quest]);
+
   // Handle quest submission
   const handleSubmit = async () => {
     if (!code.trim()) {
@@ -175,6 +189,7 @@ const QuestPage = () => {
       code: code,
       difficulty: quest.difficulty,
     };
+
 
     const options = {
       method: "POST",
@@ -197,7 +212,6 @@ const QuestPage = () => {
 
         const data = await response.json();
 
-        // console.log("Quest submitted successfully:", data);
         setCooldown(30);
         setExecutionResults(data);
         // alert("Quest submitted successfully!");
@@ -259,7 +273,7 @@ const QuestPage = () => {
             <h4 className="p-2 text-lg primary_object primary_text">
               Task Description:
             </h4>
-            <div className="p-2 mt-2 text-l primary_object">
+            <div className="p-2 mt-2 text-xl primary_object">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -292,7 +306,7 @@ const QuestPage = () => {
 
           <div className="mt-6">
             <div className="p-2 primary_object">
-              <CodeEditor language={language} code={code} onChange={setCode} />
+              <CodeEditor language={language} code={code} onChange={setCode} onLanguageChange={setLanguage} />
             </div>
           </div>
           

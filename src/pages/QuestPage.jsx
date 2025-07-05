@@ -21,7 +21,7 @@ const QuestPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [editorInstance, setEditorInstance] = useState(null);
-  const [language, setLanguage] = useState("python");
+  const [language, setLanguage] = useState();
   const [code, setCode] = useState("# Write your code here");
   const [executionResults, setExecutionResults] = useState(null);
   const [cooldown, setCooldown] = useState(0);
@@ -162,6 +162,13 @@ const QuestPage = () => {
     }
   };
 
+  // Handle language change
+  useEffect(() => {
+    if (quest?.language) {
+      setLanguage(quest.language.toLowerCase());
+    }
+  }, [quest]);
+
   // Handle quest submission
   const handleSubmit = async () => {
     if (!code.trim()) {
@@ -175,6 +182,8 @@ const QuestPage = () => {
       code: code,
       difficulty: quest.difficulty,
     };
+
+    console.log("Submitting quest with data:", data);
 
     const options = {
       method: "POST",
@@ -292,7 +301,7 @@ const QuestPage = () => {
 
           <div className="mt-6">
             <div className="p-2 primary_object">
-              <CodeEditor language={language} code={code} onChange={setCode} />
+              <CodeEditor language={language} code={code} onChange={setCode} onLanguageChange={setLanguage} />
             </div>
           </div>
           

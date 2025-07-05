@@ -21,7 +21,7 @@ const QuestPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [editorInstance, setEditorInstance] = useState(null);
-  const [language, setLanguage] = useState();
+  const [language, setLanguage] = useState("");
   const [code, setCode] = useState();
   const [executionResults, setExecutionResults] = useState(null);
   const [cooldown, setCooldown] = useState(0);

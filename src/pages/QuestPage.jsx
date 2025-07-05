@@ -22,7 +22,7 @@ const QuestPage = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [editorInstance, setEditorInstance] = useState(null);
   const [language, setLanguage] = useState();
-  const [code, setCode] = useState("# Write your code here");
+  const [code, setCode] = useState();
   const [executionResults, setExecutionResults] = useState(null);
   const [cooldown, setCooldown] = useState(0);
 
@@ -169,6 +169,13 @@ const QuestPage = () => {
     }
   }, [quest]);
 
+  // Handle quest template code
+  useEffect(() => {
+    if (quest?.function_template) {
+      setCode(quest.function_template);
+    }
+  }, [quest]);
+
   // Handle quest submission
   const handleSubmit = async () => {
     if (!code.trim()) {
@@ -268,7 +275,7 @@ const QuestPage = () => {
             <h4 className="p-2 text-lg primary_object primary_text">
               Task Description:
             </h4>
-            <div className="p-2 mt-2 text-l primary_object">
+            <div className="p-2 mt-2 text-xl primary_object">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{

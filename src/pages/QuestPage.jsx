@@ -190,7 +190,6 @@ const QuestPage = () => {
       difficulty: quest.difficulty,
     };
 
-    console.log("Submitting quest with data:", data);
 
     const options = {
       method: "POST",
@@ -213,7 +212,6 @@ const QuestPage = () => {
 
         const data = await response.json();
 
-        // console.log("Quest submitted successfully:", data);
         setCooldown(30);
         setExecutionResults(data);
         // alert("Quest submitted successfully!");

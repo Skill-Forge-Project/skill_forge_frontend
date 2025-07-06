@@ -8,5 +8,21 @@ permissions:
   contents: read
 
 jobs:
-  call-lint-check:
-    uses: Skill-Forge-Project/ci-templates/.github/workflows/lint-check.yml@master
+  lint-submodules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Scan for print() and console.log()
+        run: |
+          set -e
+          echo "Scanning submodules..."
+          for dir in $(find . -type f \( -name '*.js' -o -name '*.ts' -o -name '*.py' \)); do
+            if grep -nE '^\s*\bprint\s*\(|console\.log\s*\(' "$dir" | grep -v 'Blueprint'; then
+              echo "Debug statements found!"
+              exit 1
+            fi
+          done

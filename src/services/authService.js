@@ -4,6 +4,7 @@ export const login = async (data) => {
   const res = await fetch(`${AUTH_API}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include", // Include cookies in the request
     body: JSON.stringify(data),
   });
 

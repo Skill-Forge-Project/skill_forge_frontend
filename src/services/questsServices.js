@@ -4,18 +4,17 @@ const QUESTS_API = import.meta.env.VITE_QUESTS_SERVICE_URL;
 export const getAllQuests = async (accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quests`, {
     method: "GET",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-    },
+    credentials: "include", // Ensure cookies are sent for session management
   });
 
-  const isTokenValid = await checkValidToken(res.status);
+  //const isTokenValid = await checkValidToken(res.status);
 
-  if (isTokenValid && res.ok) {
+  if (res.ok) {
     const data = await res.json();
     return data;
   } else {
-    throw new Error(data.message || "Failed to fetch quests");
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Failed to fetch quests");
   }
 };
 
@@ -23,18 +22,16 @@ export const getAllQuests = async (accessToken, checkValidToken) => {
 export const getQuestsByLanguage = async (language, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quests/${language}`, {
     method: "GET",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-    },
-  });
+    credentials: "include" // Ensure cookies are sent for session management
+   });
 
-  const isTokenValid = await checkValidToken(res.status);
+  // const isTokenValid = await checkValidToken(res.status); 
 
-  if (isTokenValid && res.ok) {
+  if (res.ok) {
     const data = await res.json();
     return data;
   } else {
-    throw new Error(data.message || "Failed to fetch quests");
+    throw new Error(data.message || "Failed to fetch quests by language");
   }
 };
 
@@ -42,18 +39,23 @@ export const getQuestsByLanguage = async (language, accessToken, checkValidToken
 export const getQuestById = async (questId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quest/${questId}`, {
     method: "GET",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-    },
+    credentials: "include", // Ensure cookies are sent for session management
   });
 
-  const isTokenValid = await checkValidToken(res.status);
+  // const isTokenValid = await checkValidToken(res.status);
 
-  if (isTokenValid && res.ok) {
+  // if (isTokenValid && res.ok) {
+  //   const data = await res.json();
+  //   return data;
+  // } else {
+  //   throw new Error(data.message || "Failed to fetch quest");
+  // }
+  if (res.ok) {
     const data = await res.json();
     return data;
   } else {
-    throw new Error(data.message || "Failed to fetch quest");
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Failed to fetch quest");
   }
 };
 
@@ -62,18 +64,17 @@ export const getQuestById = async (questId, accessToken, checkValidToken) => {
 export const editQuestById = async (questId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/edit_quest/${questId}`, {
     method: "GET",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-    },
+    credentials: "include", // Ensure cookies are sent for session management
   });
 
-  const isTokenValid = await checkValidToken(res.status);
+  //const isTokenValid = await checkValidToken(res.status);
 
-  if (isTokenValid && res.ok) {
+  if (res.ok) {
     const data = await res.json();
     return data;
   } else {
-    throw new Error(data.message || "Failed to fetch quest");
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Failed to fetch quest for editing");
   }
 };
 
@@ -81,18 +82,17 @@ export const editQuestById = async (questId, accessToken, checkValidToken) => {
 export const getSolvedQuestsByUserId = async (userId, accessToken) => {
   const res = await fetch(`${QUESTS_API}/solutions/${userId}`, {
     method: "GET",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-    },
+    credentials: "include", // Ensure cookies are sent for session management
   });
 
-  const isTokenValid = await checkValidToken(res.status);
+  //const isTokenValid = await checkValidToken(res.status);
 
-  if (isTokenValid && res.ok) {
+  if (res.ok) {
     const data = await res.json();
     return data;
   } else {
-    throw new Error(data.message || "Failed to fetch solved quests");
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Failed to fetch solved quests");
   }
 };
 
@@ -100,14 +100,12 @@ export const getSolvedQuestsByUserId = async (userId, accessToken) => {
 export const getCorrectSolutionsByUserId = async (userId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/correct_solutions/${userId}`, {
     method: "GET",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-    },
+    credentials: "include", // Ensure cookies are sent for session management
   });
 
-  const isTokenValid = await checkValidToken(res.status);
+  // const isTokenValid = await checkValidToken(res.status);
 
-  if (isTokenValid && res.ok) {
+  if (res.ok) {
     const data = await res.json();
     return data;
   } else {

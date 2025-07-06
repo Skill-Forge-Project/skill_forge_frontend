@@ -59,25 +59,20 @@ const QuestPage = () => {
       try {
         const response = await fetch(`${USER_API}/users/${userId}/avatar`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          credentials: "include", 
         });
 
-        const isTokenValid = await checkValidToken(response.status);
+        //const isTokenValid = await checkValidToken(response.status);
 
-        if (isTokenValid) {
-          if (!response.ok) {
+
+        if (!response.ok) {
             throw new Error("Failed to fetch avatar");
-          }
-
+        } else {
           // Convert blob to object URL
           const imageBlob = await response.blob();
           const imageObjectUrl = URL.createObjectURL(imageBlob);
           setAvatarUrl(imageObjectUrl);
-        } else {
-          throw new Error("Failed to fetch avatar");
-        }
+        } 
       } catch (err) {
         console.error("Error fetching avatar URL:", err.message);
       }
@@ -95,24 +90,17 @@ const QuestPage = () => {
       try {
         const response = await fetch(`${QUEST_API}/comments/${questId}`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
+          credentials: "include", // Ensure cookies are sent for session management
         });
 
-        const isTokenValid = await checkValidToken(response.status);
+        //const isTokenValid = await checkValidToken(response.status);
 
-        if (isTokenValid) {
-          if (!response.ok) {
+        if (!response.ok) {
             throw new Error("Failed to fetch comments");
+          } else {
+            const data = await response.json();
+            setComments(data);
           }
-          
-          const data = await response.json();
-          setComments(data);
-        } else {
-          throw new Error("Failed to fetch comments");
-        }
       } catch (error) {
         console.error("Error fetching comments:", error);
       }

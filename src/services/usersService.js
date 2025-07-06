@@ -43,6 +43,7 @@ export const getAvatarUrl = async (userId, accessToken, checkValidToken) => {
     headers: {
       "Authorization": `Bearer ${accessToken}`,
       "Content-Type": "application/json",
+      credentials: "include", // Include credentials for CORS requests
 
     },
   });

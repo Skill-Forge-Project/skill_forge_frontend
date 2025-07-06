@@ -5,6 +5,9 @@ export async function getAvatarUrl(userId, accessToken, checkValidToken, userApi
     const response = await fetch(`${userApiBase}/users/${userId}/avatar`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        credentials: "include", // Include credentials for CORS requests
       },
     });
 

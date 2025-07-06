@@ -5,61 +5,44 @@ export const AuthContext = createContext();
 const AUTH_API = import.meta.env.VITE_AUTH_API;
 
 export function AuthProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const [accessToken, setAccessToken] = useState(() => {
-        const accessToken = localStorage.getItem('token');
+  // Optionally, check session status on app load (e.g. ping a /me or /protected endpoint)
 
-        if (!accessToken) {
-            return '';
-        }
+  const loginUser = async (form) => {
+    const res = await fetch(`${AUTH_API}/login`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
 
-        return accessToken;
-    })
-
-    const accessTokenSetter = (newToken) => {
-        localStorage.setItem("token", newToken);
-        setAccessToken(newToken)
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || "Login failed");
     }
 
-    // Checks if access token is valid
-    // If access token has expired, a request to the refresh_access_token endpoint is sent and the access token is reset
-    const checkValidToken = async (responseStatus) => {
-      if (responseStatus === 401) {
-        const refreshToken = localStorage.getItem("refresh_token");
-    
-        const res = await fetch(`${AUTH_API}/refresh_access_token`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${refreshToken}`,
-          }
-        })
-    
-        if (res.ok) {
-          const newAccessToken = await res.json();
+    setIsAuthenticated(true);
+  };
 
-          localStorage.setItem("token", newAccessToken.access_token);
-          setAccessToken(newAccessToken.access_token);
-    
-          return true;
-        }
-    
-        return false;
-      }
-    
-      return true;
-    }
+  const logoutUser = async () => {
+    await fetch(`${AUTH_API}/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
 
-    const contextValues = {
-        accessToken,
-        accessTokenSetter,
-        checkValidToken
-    }
+    setIsAuthenticated(false);
+  };
 
-    return (
-        <AuthContext.Provider value={contextValues}>
-            {children}
-        </AuthContext.Provider>
-    )
+  const contextValues = {
+    isAuthenticated,
+    loginUser,
+    logoutUser,
+  };
 
+  return (
+    <AuthContext.Provider value={contextValues}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

@@ -133,17 +133,14 @@ const QuestPage = () => {
     try {
       const response = await fetch(`${QUEST_API}/comments/${questId}`, options);
 
-      const isTokenValid = await checkValidToken(response.status);
-
-      if (isTokenValid) {
-        if (!response.ok) {
-          throw new Error("Failed to submit quest");
-        }
-
-        window.location.reload(); 
-      } else {
-        alert("Error submitting comment. Please try again.");
+      // const isTokenValid = await checkValidToken(response.status);
+      if (!response.ok) {
+        throw new Error("Failed to submit comment");
       }
+      const data = await response.json();
+      setComments((prevComments) => [...prevComments, data]);
+      setComment(""); // Clear the comment input
+      alert("Comment submitted successfully!");
     } catch (error) {
       alert("Error submitting comment. Please try again.");
     }

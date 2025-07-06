@@ -59,7 +59,6 @@ export const getQuestById = async (questId, accessToken, checkValidToken) => {
   }
 };
 
-
 // Get a single quest by ID from the Quests Service for Edit Quest Page in Admin Dashboard
 export const editQuestById = async (questId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/edit_quest/${questId}`, {

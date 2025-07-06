@@ -1,26 +1,25 @@
+const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
+
 // Fetch the user avatar from the server
-export async function getAvatarUrl(userId, accessToken, checkValidToken, userApiBase) {
-  console.log(accessToken)
+export async function getAvatarUrl(userId) {
+  // console.log(accessToken);
   try {
-    const response = await fetch(`${userApiBase}/users/${userId}/avatar`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        credentials: "include", // Include credentials for CORS requests
-      },
+    const response = await fetch(`${USER_API}/users/${userId}/avatar`, {
+      credentials: "include", // Include credentials for CORS requests
     });
 
-    const isTokenValid = await checkValidToken(response.status);
+    // const isTokenValid = await checkValidToken(response.status);
 
-    if (isTokenValid && response.ok) {
+    if (response.ok) {
       const blob = await response.blob();
       return URL.createObjectURL(blob);
     } else {
-      throw new Error("Failed to fetch avatar");
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch avatar URL");
     }
-  } catch (err) {
-    console.error("Error fetching avatar:", err);
-    return null;
+
+} catch (error) {
+    console.error("Error fetching avatar URL:", error);
+    throw error; // Re-throw the error to be handled by the caller
   }
 }

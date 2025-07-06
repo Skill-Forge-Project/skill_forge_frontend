@@ -5,23 +5,40 @@ import "../../assets/styling/navbar.css";
 import { FiSettings } from "react-icons/fi";
 import skillForgeLogo from "../../assets/img/skill_forge_logo.png";
 import { AuthContext } from "../../contexts/AuthContext";
+const AUTH_API = import.meta.env.VITE_AUTH_API;
 
 
-
-const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
 
 export default function Navbar() {
   const { accessToken, checkValidToken } = useContext(AuthContext);
-  const userId = localStorage.getItem("userId");
+
   const [avatarUrl, setAvatarUrl] = useState(null);
 
 
   useEffect(() => {
-    if (userId) {
-      getAvatarUrl(userId, accessToken, checkValidToken, USER_API).then((url) => {
-        setAvatarUrl(url);
-      });
-    }
+    const fetchUserAndAvatar = async () => {
+      try {
+        const meResponse = await fetch(`${AUTH_API}/me`, {
+          credentials: "include",
+        });
+  
+        if (!meResponse.ok) throw new Error("Session not found");
+  
+        const contentType = meResponse.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Invalid or empty response from /me");
+        }
+
+        const { user_id } = await meResponse.json();
+  
+        const avatarURL = await getAvatarUrl(user_id);
+        setAvatarUrl(avatarURL);
+      } catch (error) {
+        console.error("Error loading avatar:", error);
+      }
+    };
+  
+    fetchUserAndAvatar();
   }, []);
 
   return (

@@ -7,6 +7,7 @@ import UserStats from "../components/UserProfile/UserStats";
 import Modal from "../components/Layout/Modal";
 import { getUserById, getAvatarUrl } from "../services/usersService";
 import { AuthContext } from "../contexts/AuthContext";
+import { getUserId } from "../services/usersService";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -14,14 +15,14 @@ const ProfilePage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const { accessToken, checkValidToken } = useContext(AuthContext)
-  const userId = localStorage.getItem("userId");
+  const userId = getUserId();
   const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
 
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await getUserById(userId, accessToken, checkValidToken);
+        const userData = await getUserById(userId);
         setUser(userData);
       } catch (err) {
         console.error("Error fetching user data:", err.message);
@@ -32,25 +33,14 @@ const ProfilePage = () => {
       try {
         const response = await fetch(`${USER_API}/users/${userId}/avatar`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          credentials: "include", // Include credentials for CORS requests
         });
 
-        const isTokenValid = await checkValidToken(response.status);
-
-        if (isTokenValid) {
-          if (!response.ok) {
-            throw new Error("Failed to fetch avatar");
-          }
-
-          // Convert blob to object URL
-          const imageBlob = await response.blob();
-          const imageObjectUrl = URL.createObjectURL(imageBlob);
-          setAvatarUrl(imageObjectUrl);
-        } else {
-          console.error("Error fetching avatar URL:", err.message);
-        }
+        // const isTokenValid = await checkValidToken(response.status);
+        const imageBlob = await response.blob();
+        const imageObjectUrl = URL.createObjectURL(imageBlob);
+        setAvatarUrl(imageObjectUrl);
+        
       } catch (err) {
         console.error("Error fetching avatar URL:", err.message);
       }

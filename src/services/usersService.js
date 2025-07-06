@@ -17,6 +17,21 @@ export const getAllUsers = async () => {
   }
 };
 
+// Get user ID from /me endpoint
+export const getUserId = async () => {
+  const res = await fetch(`${USER_API}/me`, {
+    credentials: "include", // Include credentials for CORS requests
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    return data.userId; // Assuming the response contains a userId field
+  } else {
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Failed to fetch user ID");
+  }
+};
+
 // Get a single user by ID from the Users Service
 export const getUserById = async (userId) => {
   const res = await fetch(`${USER_API}/users/${userId}`, {

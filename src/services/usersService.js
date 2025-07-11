@@ -1,4 +1,5 @@
 const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
+const AUTH_API = import.meta.env.VITE_AUTH_API;
 
 // Get all users from the Users Service
 export const getAllUsers = async () => {
@@ -19,7 +20,7 @@ export const getAllUsers = async () => {
 
 // Get user ID from /me endpoint
 export const getUserId = async () => {
-  const res = await fetch(`${USER_API}/me`, {
+  const res = await fetch(`${AUTH_API}/me`, {
     credentials: "include", // Include credentials for CORS requests
   });
 

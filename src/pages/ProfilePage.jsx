@@ -18,7 +18,6 @@ const ProfilePage = () => {
   const userId = getUserId();
   const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
 
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -40,7 +39,7 @@ const ProfilePage = () => {
         const imageBlob = await response.blob();
         const imageObjectUrl = URL.createObjectURL(imageBlob);
         setAvatarUrl(imageObjectUrl);
-        
+
       } catch (err) {
         console.error("Error fetching avatar URL:", err.message);
       }

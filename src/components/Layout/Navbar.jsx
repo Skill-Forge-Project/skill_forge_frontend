@@ -1,45 +1,52 @@
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { getAvatarUrl } from "../../services/useAvatarUrl";
+import { getAvatarUrl } from "../../services/usersService";
 import "../../assets/styling/navbar.css";
 import { FiSettings } from "react-icons/fi";
 import skillForgeLogo from "../../assets/img/skill_forge_logo.png";
 import { AuthContext } from "../../contexts/AuthContext";
-const AUTH_API = import.meta.env.VITE_AUTH_API;
+import { getUserId } from "../../services/usersService";
+import { set } from "date-fns";
 
+//const AUTH_API = import.meta.env.VITE_AUTH_API;
 
 
 export default function Navbar() {
   const { accessToken, checkValidToken } = useContext(AuthContext);
-
+  const [userId, setUserId]  = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
 
 
+  // Fetch user ID
   useEffect(() => {
-    const fetchUserAndAvatar = async () => {
+    const fetchUserId = async () => {
       try {
-        const meResponse = await fetch(`${AUTH_API}/me`, {
-          credentials: "include",
-        });
-  
-        if (!meResponse.ok) throw new Error("Session not found");
-  
-        const contentType = meResponse.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Invalid or empty response from /me");
-        }
-
-        const { user_id } = await meResponse.json();
-  
-        const avatarURL = await getAvatarUrl(user_id);
-        setAvatarUrl(avatarURL);
+        const id = await getUserId();
+        setUserId(id);
       } catch (error) {
-        console.error("Error loading avatar:", error);
+        console.error("Error fetching user ID:", error);
       }
     };
-  
-    fetchUserAndAvatar();
+
+    fetchUserId();
   }, []);
+
+  // Fetch user avatar
+  useEffect(() => {
+    if (!userId) return; // Ensure userId is available before fetching avatar
+    const fetchAvatarUrl = async () => {
+      if (userId) {
+        try {
+          const avatarURL = await getAvatarUrl(userId);
+          setAvatarUrl(avatarURL);
+        } catch (error) {
+          console.error("Error loading avatar:", error);
+        }
+      }
+    };
+
+    fetchAvatarUrl();
+  }, [userId]);
 
   return (
     <nav className="p-0 flex justify-between items-center navbar_bg">

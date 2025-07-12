@@ -11,15 +11,32 @@ import { getUserId } from "../services/usersService";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
+  const [userId, setUserId]  = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const { accessToken, checkValidToken } = useContext(AuthContext)
-  const userId = getUserId();
   const USER_API = import.meta.env.VITE_USERS_SERVICE_URL;
 
+  // Fetch user ID
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const id = await getUserId();
+        setUserId(id);
+        console.log("Fetched User ID:", id);
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  // Fetch user data and avatar URL
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!userId) return; // Ensure userId is available before fetching user data
       try {
         const userData = await getUserById(userId);
         setUser(userData);
@@ -29,19 +46,12 @@ const ProfilePage = () => {
     };
 
     const fetchAvatarUrl = async () => {
+      if (!userId) return; // Ensure userId is available before fetching avatar
       try {
-        const response = await fetch(`${USER_API}/users/${userId}/avatar`, {
-          method: "GET",
-          credentials: "include", // Include credentials for CORS requests
-        });
-
-        // const isTokenValid = await checkValidToken(response.status);
-        const imageBlob = await response.blob();
-        const imageObjectUrl = URL.createObjectURL(imageBlob);
-        setAvatarUrl(imageObjectUrl);
-
-      } catch (err) {
-        console.error("Error fetching avatar URL:", err.message);
+        const avatarURL = await getAvatarUrl(userId);
+        setAvatarUrl(avatarURL);
+      } catch (error) {
+        console.error("Error loading avatar:", error);
       }
     };
 
@@ -50,6 +60,29 @@ const ProfilePage = () => {
       fetchAvatarUrl();
     }
   }, [userId, accessToken, USER_API]);
+
+
+
+
+
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const userData = await getUserById(userId);
+  //       setUser(userData);
+  //     } catch (err) {
+  //       console.error("Error fetching user data:", err.message);
+  //     }
+  //   };
+
+  //   const avatarURL = getAvatarUrl(userId);
+  //   setAvatarUrl(avatarURL);
+
+  //   if (userId) {
+  //     fetchUserData();
+  //     avatarURL();
+  //   }
+  // }, [userId, accessToken, USER_API]);
 
   if (!user) return <div className="text-white">No user data...</div>;
 

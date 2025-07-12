@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { updateUser } from "../../services/usersService";
+import { updateUser, updateUserAvatar } from "../../services/usersService";
 
 // Import Social Media Icons
 import FacobookIcon from "../../assets/img/social_media_icons/facebook.png";
@@ -11,6 +11,9 @@ import LinkedInIcon from "../../assets/img/social_media_icons/linkedin.png";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const ProfileMain = ({ user, setModalOpen, setModalMessage }) => {
+  console.log("User Id :", user.id);
+
+
   const [formData, setFormData] = useState({
     about_me: user.about_me || "",
     first_name: user.first_name || "",
@@ -44,37 +47,15 @@ const ProfileMain = ({ user, setModalOpen, setModalMessage }) => {
   const handleAvatarUpload = async (e) => {
     e.preventDefault();
     if (!avatarFile) return;
-
-    const form = new FormData();
-    form.append("avatar", avatarFile);
-
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_USERS_SERVICE_URL}/update_user/${user.id}/avatar`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: form,
-        }
-      );
-
-      const isTokenValid = await checkValidToken(res.status);
-
-      if (isTokenValid) {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Upload failed");
-        setModalMessage("Avatar updated successfully!");
-        setModalOpen(true);
-      } else {
-        setModalMessage("Avatar upload failed.");
-        setModalOpen(true);
-      }
-    } catch (err) {
+    const updateAvatar = await updateUserAvatar(user.id, avatarFile);
+    if (!updateAvatar) {
       setModalMessage("Avatar upload failed.");
       setModalOpen(true);
+      return;
     }
+    setModalMessage("Avatar updated successfully!");
+    setModalOpen(true);
+
     // Redirect to the profile page
     window.location.reload();
   };

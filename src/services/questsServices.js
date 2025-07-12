@@ -5,6 +5,9 @@ export const getAllQuests = async (accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quests`, {
     method: "GET",
     credentials: "include", // Ensure cookies are sent for session management
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   //const isTokenValid = await checkValidToken(res.status);
@@ -22,7 +25,10 @@ export const getAllQuests = async (accessToken, checkValidToken) => {
 export const getQuestsByLanguage = async (language, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quests/${language}`, {
     method: "GET",
-    credentials: "include" // Ensure cookies are sent for session management
+    credentials: "include", // Ensure cookies are sent for session management
+    headers: {
+      "Content-Type": "application/json",
+    },
    });
 
   // const isTokenValid = await checkValidToken(res.status); 
@@ -40,6 +46,9 @@ export const getQuestById = async (questId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/quest/${questId}`, {
     method: "GET",
     credentials: "include", // Ensure cookies are sent for session management
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   // const isTokenValid = await checkValidToken(res.status);
@@ -64,6 +73,9 @@ export const editQuestById = async (questId, accessToken, checkValidToken) => {
   const res = await fetch(`${QUESTS_API}/edit_quest/${questId}`, {
     method: "GET",
     credentials: "include", // Ensure cookies are sent for session management
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   //const isTokenValid = await checkValidToken(res.status);
@@ -82,6 +94,9 @@ export const getSolvedQuestsByUserId = async (userId, accessToken) => {
   const res = await fetch(`${QUESTS_API}/solutions/${userId}`, {
     method: "GET",
     credentials: "include", // Ensure cookies are sent for session management
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   //const isTokenValid = await checkValidToken(res.status);
@@ -100,6 +115,9 @@ export const getCorrectSolutionsByUserId = async (userId, accessToken, checkVali
   const res = await fetch(`${QUESTS_API}/correct_solutions/${userId}`, {
     method: "GET",
     credentials: "include", // Ensure cookies are sent for session management
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   // const isTokenValid = await checkValidToken(res.status);

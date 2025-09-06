@@ -1,6 +1,7 @@
 const BACKEND_API = import.meta.env.VITE_BACKEND_API;
 
 
+
 export const register = async (data) => {
   const res = await fetch(`${BACKEND_API}/register`, {
     method: "POST",
@@ -17,27 +18,27 @@ export const register = async (data) => {
   return responseData;
 }
 
-export const login = async (data) => {
-  console.log("Logging in with data:", data); // Debugging line
-}
 
+export const login = async (data) => {
+  
+  const res = await fetch(`${BACKEND_API}/login/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const responseData = await res.json();
+
+  if (!res.ok) {
+    throw new Error(responseData.message || "Login failed");
+  }
+
+  return responseData;
+};
 
 // export const login = async (data) => {
-//   const res = await fetch(`${AUTH_API}/login`, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(data),
-//   });
-
-//   const responseData = await res.json();
-
-//   if (!res.ok) {
-//     throw new Error(responseData.message || "Login failed");
-//   }
-
-//   return responseData;
-// };
-
+//   console.log("Logging in with data:", data); // Debugging line
+// }
 
 // export const signup = async (data) => {
 //   const res = await fetch(`${AUTH_API}/signup`, {

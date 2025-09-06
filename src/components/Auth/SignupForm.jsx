@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { signup } from "../../services/authService"; // Make sure you create a signup service
+import { register } from "../../services/authService"; // Make sure you create a signup service
 import { useNavigate } from "react-router-dom";
 
 export default function SignupForm() {
   const [form, setForm] = useState({
     username: "",
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: ""
   });
@@ -32,7 +32,7 @@ export default function SignupForm() {
 
     // Call the signup service to create the user
     try {
-      const result = await signup(form);
+      const result = await register(form);
       
       if (result.success) {
         navigate("/", {
@@ -85,10 +85,10 @@ export default function SignupForm() {
                 </label>
                 <div className="relative flex items-center">
                   <input
-                    name="firstName"
+                    name="first_name"
                     type="text"
                     required
-                    value={form.firstName}
+                    value={form.first_name}
                     onChange={handleChange}
                     className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
                     placeholder="Enter first name"
@@ -103,10 +103,10 @@ export default function SignupForm() {
                 </label>
                 <div className="relative flex items-center">
                   <input
-                    name="lastName"
+                    name="last_name"
                     type="text"
                     required
-                    value={form.lastName}
+                    value={form.last_name}
                     onChange={handleChange}
                     className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
                     placeholder="Enter last name"

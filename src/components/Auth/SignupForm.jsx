@@ -150,24 +150,24 @@ export default function SignupForm() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center">
+              {/* Confirm Password */}
+              <div>
+                <label className="text-slate-800 text-sm font-medium mb-2 block secondary_text">
+                  Confirm Password
+                </label>
+                <div className="relative flex items-center">
                   <input
-                    id="agree-terms"
-                    name="agree-terms"
-                    type="checkbox"
+                    name="confirmPassword"
+                    type="password"
                     required
-                    className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
+                    placeholder="Confirm password"
                   />
-                  <label
-                    htmlFor="agree-terms"
-                    className="ml-3 block text-sm text-slate-500 secondary_text"
-                  >
-                    I agree to the terms and conditions
-                  </label>
                 </div>
               </div>
-
+              
               <div className="!mt-12">
                 <button
                   type="submit"

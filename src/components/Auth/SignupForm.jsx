@@ -48,138 +48,124 @@ export default function SignupForm() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#141e30] to-[#123556]">
-      <div className="py-6 px-4">
-        <div className="grid md:grid-cols-2 items-center gap-6 max-w-6xl w-full">
-          <div className="border border-slate-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto primary_object">
+      <div className="py-6 px-4 md:px-12">
+        <div className="grid md:grid-cols-2 items-center gap-6 max-w-screen-6xl">
+          <div className="border rounded-lg p-6 shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] md:max-w-lg primary_object">
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="mb-12">
+              <div className="mb-10">
                 <h3 className="text-3xl font-semibold primary_text">Sign up</h3>
-                <p className="text-slate-500 text-sm mt-6 leading-relaxed secondary_text">
-                  Create an account and start your journey with us. It’s quick
-                  and easy.
+                <p className="text-slate-500 text-sm mt-4 leading-relaxed secondary_text">
+                  Create an account and start your journey with us.
                 </p>
               </div>
 
-              {/* Username */}
-              <div>
-                <label className="text-slate-800 text-sm font-medium mb-2 block secondary_text">
-                  Username
-                </label>
-                <div className="relative flex items-center">
-                  <input
-                    name="username"
-                    type="text"
-                    required
-                    value={form.username}
-                    onChange={handleChange}
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
-                    placeholder="Enter username"
-                  />
-                </div>
-              </div>
-
-              {/* First Name */}
-              <div>
-                <label className="text-slate-800 text-sm font-medium mb-2 block secondary_text">
-                  First Name
-                </label>
-                <div className="relative flex items-center">
+              {/* Name Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium secondary_text">
+                    First Name
+                  </label>
                   <input
                     name="first_name"
                     type="text"
                     required
                     value={form.first_name}
                     onChange={handleChange}
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
-                    placeholder="Enter first name"
+                    className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
+                    placeholder="First name"
                   />
                 </div>
-              </div>
-
-              {/* Last Name */}
-              <div>
-                <label className="text-slate-800 text-sm font-medium mb-2 block secondary_text">
-                  Last Name
-                </label>
-                <div className="relative flex items-center">
+                <div>
+                  <label className="text-sm font-medium secondary_text">
+                    Last Name
+                  </label>
                   <input
                     name="last_name"
                     type="text"
                     required
                     value={form.last_name}
                     onChange={handleChange}
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
-                    placeholder="Enter last name"
+                    className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
+                    placeholder="Last name"
                   />
                 </div>
               </div>
 
-              {/* Email */}
-              <div>
-                <label className="text-slate-800 text-sm font-medium mb-2 block secondary_text">
-                  Email
-                </label>
-                <div className="relative flex items-center">
+              {/* Account Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium secondary_text">
+                    Username
+                  </label>
+                  <input
+                    name="username"
+                    type="text"
+                    required
+                    value={form.username}
+                    onChange={handleChange}
+                    className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
+                    placeholder="Username"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium secondary_text">
+                    Email
+                  </label>
                   <input
                     name="email"
                     type="email"
                     required
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
-                    placeholder="Enter email"
+                    className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
+                    placeholder="Email"
                   />
                 </div>
               </div>
 
-              {/* Password */}
+              {/* Passwords */}
               <div>
-                <label className="text-slate-800 text-sm font-medium mb-2 block secondary_text">
+                <label className="text-sm font-medium secondary_text">
                   Password
                 </label>
-                <div className="relative flex items-center">
-                  <input
-                    name="password"
-                    type="password"
-                    required
-                    value={form.password}
-                    onChange={handleChange}
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
-                    placeholder="Enter password"
-                  />
-                </div>
+                <input
+                  name="password"
+                  type="password"
+                  required
+                  value={form.password}
+                  onChange={handleChange}
+                  className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
+                  placeholder="Password"
+                />
               </div>
-
-              {/* Confirm Password */}
               <div>
-                <label className="text-slate-800 text-sm font-medium mb-2 block secondary_text">
+                <label className="text-sm font-medium secondary_text">
                   Confirm Password
                 </label>
-                <div className="relative flex items-center">
-                  <input
-                    name="confirmPassword"
-                    type="password"
-                    required
-                    value={form.confirmPassword}
-                    onChange={handleChange}
-                    className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg secondary_text"
-                    placeholder="Confirm password"
-                  />
-                </div>
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
+                  placeholder="Confirm password"
+                />
               </div>
-              
-              <div className="!mt-12">
+
+              {/* Submit */}
+              <div className="mt-8">
                 <button
                   type="submit"
-                  className="w-full shadow-xl py-2.5 px-4 text-[15px] font-medium tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none primary_button"
+                  className="w-full py-3 px-4 text-[15px] font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-xl"
                 >
                   Sign up
                 </button>
-                <p className="text-sm !mt-6 text-center secondary_text">
+                <p className="text-sm mt-4 text-center secondary_text">
                   Already have an account?{" "}
                   <a
                     href="/"
-                    className="text-blue-600 font-medium hover:underline ml-1 whitespace-nowrap link_text"
+                    className="text-blue-600 font-medium hover:underline ml-1"
                   >
                     Sign in here
                   </a>

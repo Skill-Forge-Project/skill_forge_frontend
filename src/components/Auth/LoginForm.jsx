@@ -26,7 +26,7 @@ export default function LoginForm() {
       localStorage.setItem("token", response.access_token);
       localStorage.setItem("refresh_token", response.refresh_token)
       localStorage.setItem("userId", response.user_id);
-      // alert("Login successful"); // Debug only!
+      alert("Login successful"); // Debug only!
       navigate("/dashboard");
 
     } catch (err) {

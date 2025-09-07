@@ -3,20 +3,25 @@ const BACKEND_API = import.meta.env.VITE_BACKEND_API;
 
 
 export const register = async (data) => {
-  const res = await fetch(`${BACKEND_API}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+  try{
+    const res = await fetch(`${BACKEND_API}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
-  const responseData = await res.json();
+    const responseData = await res.json();
 
-  if (!res.ok) {
-    throw new Error(responseData.message || "Signup failed");
+    if (!res.ok) {
+      return {success:false, error:responseData};
+    }
+
+
+    return {success: true, responseData};
+    }catch(err){
+    return{success: false, errors:{non_field_errors:["Server error"]}};
   }
-
-  return responseData;
-}
+};
 
 
 export const login = async (data) => {

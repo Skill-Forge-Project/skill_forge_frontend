@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { register } from "../../services/authService"; // Make sure you create a signup service
+import { register } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 
 export default function SignupForm() {
@@ -8,41 +8,74 @@ export default function SignupForm() {
     first_name: "",
     last_name: "",
     email: "",
-    password: ""
+    password: "",
+    password2: "",
   });
-  const [error, setError] = useState("");
+
+ 
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+ 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
+  // Field-level error component
+  const FieldError = ({ field }) =>
+    errors[field] ? (
+      <ul className="text-red-500 text-sm mt-1">
+        {Array.isArray(errors[field])
+          ? errors[field].map((msg, idx) => <li key={idx}>{msg}</li>)
+          : <li>{errors[field]}</li>}
+      </ul>
+    ) : null;
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation
-    // if (form.password !== form.confirmPassword) {
-    //   setError("Passwords do not match");
-    //   return;
-    // }
-    if (!form.username || !form.email || !form.password) {
-      setError("Please fill in all fields");
+    // Clear previous errors
+    setErrors({});
+
+    // Client-side basic validation
+    const newErrors = {};
+    if (!form.username) newErrors.username = "Username is required.";
+    if (!form.email) newErrors.email = "Email is required.";
+    if (!form.password) newErrors.password = "Password is required.";
+    if (!form.password2) newErrors.password2 = "Confirm password is required.";
+    if (form.password !== form.password2)
+      newErrors.password2 = "Passwords do not match.";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    // Call the signup service to create the user
+    // Call backend register API
     try {
       const result = await register(form);
-      
+
       if (result.success) {
         navigate("/", {
-          state: { showModal: true, modalMessage: "Your account was created successfully!" },
+          state: {
+            showModal: true,
+            modalMessage: "Your account was created successfully!",
+          },
         });
       } else {
-        setError(result.message || "Signup failed");
+        // Set backend errors to state
+        if (result.errors) {
+          setErrors(result.errors);
+        } else {
+          setErrors({ non_field_errors: ["Signup failed."] });
+        }
       }
-    } catch (err) {
-      setError("An error occurred while signing up.");
+    } catch (_) {
+      setErrors({ non_field_errors: ["An error occurred while signing up."] });
     }
   };
 
@@ -50,6 +83,7 @@ export default function SignupForm() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#141e30] to-[#123556]">
       <div className="py-6 px-4 md:px-12">
         <div className="grid md:grid-cols-2 items-center gap-6 max-w-screen-6xl">
+          {/* Form Section */}
           <div className="border rounded-lg p-6 shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] md:max-w-lg primary_object">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="mb-10">
@@ -62,96 +96,93 @@ export default function SignupForm() {
               {/* Name Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium secondary_text">
-                    First Name
-                  </label>
+                  <label className="text-sm font-medium secondary_text">First Name</label>
                   <input
                     name="first_name"
                     type="text"
-                    required
                     value={form.first_name}
                     onChange={handleChange}
                     className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
                     placeholder="First name"
                   />
+                  <FieldError field="first_name" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium secondary_text">
-                    Last Name
-                  </label>
+                  <label className="text-sm font-medium secondary_text">Last Name</label>
                   <input
                     name="last_name"
                     type="text"
-                    required
                     value={form.last_name}
                     onChange={handleChange}
                     className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
                     placeholder="Last name"
                   />
+                  <FieldError field="last_name" />
                 </div>
               </div>
 
               {/* Account Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium secondary_text">
-                    Username
-                  </label>
+                  <label className="text-sm font-medium secondary_text">Username</label>
                   <input
                     name="username"
                     type="text"
-                    required
                     value={form.username}
                     onChange={handleChange}
                     className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
                     placeholder="Username"
                   />
+                  <FieldError field="username" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium secondary_text">
-                    Email
-                  </label>
+                  <label className="text-sm font-medium secondary_text">Email</label>
                   <input
                     name="email"
                     type="email"
-                    required
                     value={form.email}
                     onChange={handleChange}
                     className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
                     placeholder="Email"
                   />
+                  <FieldError field="email" />
                 </div>
               </div>
 
               {/* Passwords */}
               <div>
-                <label className="text-sm font-medium secondary_text">
-                  Password
-                </label>
+                <label className="text-sm font-medium secondary_text">Password</label>
                 <input
                   name="password"
                   type="password"
-                  required
                   value={form.password}
                   onChange={handleChange}
                   className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
                   placeholder="Password"
                 />
+                <FieldError field="password" />
               </div>
               <div>
-                <label className="text-sm font-medium secondary_text">
-                  Confirm Password
-                </label>
+                <label className="text-sm font-medium secondary_text">Confirm Password</label>
                 <input
-                  name="confirmPassword"
+                  name="password2"
                   type="password"
-                  required
-                  value={form.confirmPassword}
+                  value={form.password2}
                   onChange={handleChange}
                   className="w-full text-sm border border-slate-300 py-3 px-4 rounded-lg secondary_text"
                   placeholder="Confirm password"
                 />
+                <FieldError field="password2" />
               </div>
+
+              {/* Non-field errors */}
+              {errors.non_field_errors && (
+                <ul className="text-red-500 text-sm mt-2">
+                  {errors.non_field_errors.map((msg, idx) => (
+                    <li key={idx}>{msg}</li>
+                  ))}
+                </ul>
+              )}
 
               {/* Submit */}
               <div className="mt-8">
@@ -174,6 +205,7 @@ export default function SignupForm() {
             </form>
           </div>
 
+          {/* Image Section */}
           <div className="max-md:mt-8">
             <img
               src="src/assets/img/hero_avatar.png"

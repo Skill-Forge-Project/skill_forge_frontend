@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { register } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
+// Import Modal
+import Modal from "../Layout/Modal";
 
 export default function SignupForm() {
   const [form, setForm] = useState({
@@ -15,6 +17,8 @@ export default function SignupForm() {
  
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
  
   const handleChange = (e) => {
@@ -63,8 +67,8 @@ export default function SignupForm() {
         navigate("/", {
           state: {
             showModal: true,
-            modalMessage: "Your account was created successfully!",
-          },
+            modalMessage: "Your account was created successfully!"
+          }
         });
       } else {
         // Set backend errors to state
@@ -96,7 +100,9 @@ export default function SignupForm() {
               {/* Name Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium secondary_text">First Name</label>
+                  <label className="text-sm font-medium secondary_text">
+                    First Name
+                  </label>
                   <input
                     name="first_name"
                     type="text"
@@ -108,7 +114,9 @@ export default function SignupForm() {
                   <FieldError field="first_name" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium secondary_text">Last Name</label>
+                  <label className="text-sm font-medium secondary_text">
+                    Last Name
+                  </label>
                   <input
                     name="last_name"
                     type="text"
@@ -124,7 +132,9 @@ export default function SignupForm() {
               {/* Account Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium secondary_text">Username</label>
+                  <label className="text-sm font-medium secondary_text">
+                    Username
+                  </label>
                   <input
                     name="username"
                     type="text"
@@ -136,7 +146,9 @@ export default function SignupForm() {
                   <FieldError field="username" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium secondary_text">Email</label>
+                  <label className="text-sm font-medium secondary_text">
+                    Email
+                  </label>
                   <input
                     name="email"
                     type="email"
@@ -151,7 +163,9 @@ export default function SignupForm() {
 
               {/* Passwords */}
               <div>
-                <label className="text-sm font-medium secondary_text">Password</label>
+                <label className="text-sm font-medium secondary_text">
+                  Password
+                </label>
                 <input
                   name="password"
                   type="password"
@@ -163,7 +177,9 @@ export default function SignupForm() {
                 <FieldError field="password" />
               </div>
               <div>
-                <label className="text-sm font-medium secondary_text">Confirm Password</label>
+                <label className="text-sm font-medium secondary_text">
+                  Confirm Password
+                </label>
                 <input
                   name="password2"
                   type="password"
@@ -215,6 +231,13 @@ export default function SignupForm() {
           </div>
         </div>
       </div>
+      {/* Modal for create new quest */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Create New Quest"
+        message={modalMessage}
+      />
     </div>
   );
 }
